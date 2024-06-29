@@ -19,3 +19,4 @@ Work in progress software for indexing entire archives of sites (or sections of 
   - [ ] Output results nicely
   - [ ] Advanced search features
 - [X] Option to route through TOR
+- [ ] Write good documentation
