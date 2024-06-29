@@ -14,6 +14,7 @@ void TOR::torInstance::createTorrc(){
     torrcFile.close();
 }
 
+
 void TOR::torInstance::waitForTor(){
     // Try to connect to 127.0.0.1:this->port using a socket every 100ms until it works:
     int sFD = socket(AF_INET, SOCK_STREAM, 0);
@@ -27,31 +28,36 @@ void TOR::torInstance::waitForTor(){
 }
 
 TOR::torInstance::torInstance(){
-    this->setPort(9050);
+    this->setPort(9051);
 }
+
 
 TOR::torInstance::torInstance(int port){
     this->setPort(port);
 }
 
+
 TOR::torInstance::~torInstance(){
     this->stop();
 }
+
 
 void TOR::torInstance::setPort(int port){
     this->port = port;
     this->torrcPath = "./torData/torrc" + std::to_string(port);
 }
 
+
 int TOR::torInstance::getPort(){
     return this->port;
 }
 
-void TOR::torInstance::start(){
+
+TOR::error TOR::torInstance::start(){
     this->createTorrc(); // Ensure that the torrc file with the correct port configured exists
     FILE* torInstallCheck = popen("tor --version", "r"); // Check if TOR can be run from the command line
     if(torInstallCheck == NULL){
-        throw std::runtime_error("TOR is not installed on this system");
+        return error{.errcode=GENERIC_ERR, .errmsg="TOR is not installed on this system"};
     }
     pclose(torInstallCheck);
     this->torProxyPID = fork();
@@ -60,11 +66,12 @@ void TOR::torInstance::start(){
         throw std::runtime_error("Failed to star TOR"); // This makes sense I think
     }
     // Inside the parent process:
-    std::cout << "Starting TOR on port " << this->port << ". Allowing 20+ seconds for TOR to start up...\n";
+    std::cout << "Starting TOR on port " << this->port << "\n";
     this->waitForTor(); // Wait for TOR to start up
-    //sleep(10); // Wait an additional 10 seconds to ensure that TOR is fully started up
-    std::cout << "Done starting TOR on port " << this->port << "\n";
+    std::cout << "TOR started on port " << this->port << " (successful socket connection made)\n";
+    return error{.errcode=OK, .errmsg=""};
 }
+
 
 void TOR::torInstance::stop(){
     if(this->torProxyPID != -1){
@@ -73,10 +80,12 @@ void TOR::torInstance::stop(){
     }
 }
 
-void TOR::torInstance::restart(){
+
+TOR::error TOR::torInstance::restart(){
     this->stop();
-    this->start();
+    return this->start();
 }
+
 
 bool TOR::torInstance::isRunning(){
     return (this->torProxyPID != -1);

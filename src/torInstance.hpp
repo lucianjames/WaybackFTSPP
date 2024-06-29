@@ -13,10 +13,20 @@
 
 namespace TOR{
 
+    enum errEnum : char {
+        OK,
+        GENERIC_ERR,
+    };
+
+    struct error {
+        errEnum errcode;
+        std::string errmsg;
+    };
+
     class torInstance{
     private:
-        int port = 9050;
-        std::string torrcPath = "./torrc9050";
+        int port = 9051;
+        std::string torrcPath = "./torrc9051";
         pid_t torProxyPID = -1;
         void createTorrc();
         void waitForTor();
@@ -27,9 +37,9 @@ namespace TOR{
         ~torInstance();
         void setPort(int port);
         int getPort();
-        void start();
+        error start();
         void stop();
-        void restart();
+        error restart();
         bool isRunning();
     };
 
