@@ -39,6 +39,18 @@ url_manager::error url_manager::urlDB::create(const std::string& dbPath){
 
 
 /*
+    Opens an existing waybackFTSPP url db file
+*/
+url_manager::error url_manager::urlDB::open(const std::string& dbPath){
+    if(sqlite3_open(dbPath.c_str(), &this->db)){
+        return error{.errcode=SQLITE_ERR, .errmsg="Failed to open db"};
+    }
+
+    return error{.errcode=OK, .errmsg=""};
+}
+
+
+/*
     Gets available pages for a given domain from the wayback CDX API and adds it to the DB file
 */
 url_manager::error url_manager::urlDB::addDomain(const std::string& domain){
@@ -73,7 +85,6 @@ url_manager::error url_manager::urlDB::addDomain(const std::string& domain){
             return error{.errcode=API_BADDATA, .errmsg="Unexpected number of tokens in line while parsing cdxData"};
         }
         cdxDataParsed.push_back(dbEntry{
-            .ID = -1,
             .url = tokens[2],
             .timestamp = tokens[1],
             .mimetype = tokens[0],
@@ -113,4 +124,40 @@ url_manager::error url_manager::urlDB::enableTOR(const int port){
         return error{.errcode=OK, .errmsg=""};
     }
     return error{.errcode=GENERIC_ERR, .errmsg=res.errmsg};
+}
+
+
+/*
+    If allowed_mimetypes is empty, no filtering will be supplied
+*/
+url_manager::error url_manager::urlDB::getData(std::vector<dbEntry>& out, bool unscraped_only, const std::vector<std::string>& allowed_mimetypes){
+    if(this->db == NULL){
+        return error{.errcode=NOT_INIT, .errmsg="No DB file open"};
+    }
+
+    const std::string get_all_sql = "SELECT * FROM 'URLS';";
+    sqlite3_stmt* stmt;
+    SQLITE_CALL(sqlite3_prepare_v2(this->db, get_all_sql.c_str(), -1, &stmt, NULL), this->db);
+
+    while(sqlite3_step(stmt) == SQLITE_ROW){
+        dbEntry e;
+        e.url = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
+        e.timestamp = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
+        e.mimetype = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+        e.scraped = sqlite3_column_int(stmt, 3);
+
+        bool allowed_mimetype = false;
+        if(allowed_mimetypes.size() > 0){ // if allowed_mimetypes is empty, then no filtering is to be applied
+            if(std::find(allowed_mimetypes.begin(), allowed_mimetypes.end(), e.mimetype) != allowed_mimetypes.end()){
+                allowed_mimetype = true;
+            }
+        }
+        if(allowed_mimetype && !((e.scraped == 1) && unscraped_only)){
+            out.push_back(e);
+        }
+
+    }
+    SQLITE_CALL(sqlite3_finalize(stmt), this->db);
+
+    return error{.errcode=OK, .errmsg=""};
 }

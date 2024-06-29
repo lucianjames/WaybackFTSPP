@@ -1,6 +1,7 @@
 #include <string>
 #include <filesystem>
 #include <sstream>
+#include <algorithm>
 
 #include <sqlite3.h>
 
@@ -26,7 +27,6 @@ namespace url_manager{
     };
 
     struct dbEntry {
-        int ID;
         std::string url;
         std::string timestamp;
         std::string mimetype;
@@ -40,6 +40,18 @@ namespace url_manager{
     if(func != SQLITE_OK) { \
         std::cout << "SQLite error: " << sqlite3_errmsg(db); \
     } \
+
+    namespace mimetypes {
+        const std::string TEXT_HTML = "text/html";
+        const std::string TEXT_PLAIN = "text/plain";
+        const std::string TEXT_XML = "text/xml";
+        const std::string TEXT_JAVASCRIPT = "text/javascript";
+        const std::string APPLICATION_PDF = "application/pdf";
+        const std::string APPLICATION_JAVASCRIPT = "application/javascript";
+        const std::string WARC_REVISIT = "warc/revisit";
+        const std::string IMAGE_PNG = "image/png";
+        const std::string IMAGE_JPG = "image/jpg";
+    }
     
     /*
         urlDB provides easy functions for creating and reading SQLITE database files containing wayback page URLs
@@ -51,8 +63,10 @@ namespace url_manager{
     public:
         ~urlDB();
         error create(const std::string& dbPath);
+        error open(const std::string& dbPath);
         error addDomain(const std::string& domain);
         error enableTOR(const int port);
+        error getData(std::vector<dbEntry>& out, bool unscraped_only, const std::vector<std::string>& allowed_mimetypes);
     };
 
 }

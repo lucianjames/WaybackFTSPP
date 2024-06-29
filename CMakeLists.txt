@@ -27,11 +27,13 @@ include_directories(${SQLITE3_INCLUDE_DIRS})
 # src/ contains .cpp and .hpp files that are used by both the indexer and the search engine
 file(GLOB COMMON_SOURCES "src/*.cpp" "src/*.hpp")
 
-add_executable(WaybackGetUrls ${COMMON_SOURCES} create_url_idx.cpp)
+add_executable(WaybackGetUrls ${COMMON_SOURCES} waybackGetUrls.cpp)
+add_executable(WaybackScrapePages ${COMMON_SOURCES} waybackScrapePages.cpp)
+
 
 set(LIBRARIES curl libxml2 jsoncpp sqlite3)
 set(TARGETS WaybackGetUrls 
-            # Rest go here
+            WaybackScrapePages
 )
 
 foreach(target ${TARGETS})
