@@ -31,7 +31,6 @@ add_executable(WaybackGetUrls ${COMMON_SOURCES} create_url_idx.cpp)
 
 set(LIBRARIES curl libxml2 jsoncpp sqlite3)
 set(TARGETS WaybackGetUrls 
-            testcurl
             # Rest go here
 )
 
