@@ -10,12 +10,11 @@ size_t curl_helper::curlHelper::curlWriteCallback(void *contents, size_t size, s
 
 curl_helper::error curl_helper::curlHelper::enableTOR(const int port){
     this->torInstance.setPort(port);
-    this->torInstance.start();
-    this->useTor = this->torInstance.isRunning();
-    if(this->useTor){
+    TOR::error res = this->torInstance.start();
+    if(res.errcode == TOR::OK){
         return error{.errcode=OK, .errmsg=""};
     }else{
-        return error{.errcode=TOR_FAIL, .errmsg="this->torInstance.isRunning() == false"};
+        return error{.errcode=TOR_FAIL, .errmsg=res.errmsg};
     }
 }
 
