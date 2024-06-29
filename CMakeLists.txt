@@ -28,7 +28,6 @@ include_directories(${SQLITE3_INCLUDE_DIRS})
 file(GLOB COMMON_SOURCES "src/*.cpp" "src/*.hpp")
 
 add_executable(WaybackGetUrls ${COMMON_SOURCES} create_url_idx.cpp)
-add_executable(testcurl ${COMMON_SOURCES} testcurl.cpp)
 
 set(LIBRARIES curl libxml2 jsoncpp sqlite3)
 set(TARGETS WaybackGetUrls 
