@@ -1,17 +1,22 @@
 #include "curlHelper.hpp"
 
+
 size_t curl_helper::curlHelper::curlWriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
     std::vector<char>* vec = (std::vector<char>*)userp;
     vec->insert(vec->end(), (char*)contents, (char*)contents+(size*nmemb));
     return size*nmemb;
 }
 
+
 curl_helper::error curl_helper::curlHelper::enableTOR(const int port){
     this->torInstance.setPort(port);
     this->torInstance.start();
     this->useTor = this->torInstance.isRunning();
-
-    return error{.errcode=OK, .errmsg=""};
+    if(this->useTor){
+        return error{.errcode=OK, .errmsg=""};
+    }else{
+        return error{.errcode=TOR_FAIL, .errmsg="this->torInstance.isRunning() == false"};
+    }
 }
 
 

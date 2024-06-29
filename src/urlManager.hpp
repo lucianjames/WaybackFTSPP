@@ -17,6 +17,7 @@ namespace url_manager{
         SQLITE_ERR, // Maybe bad name, can be confused with SQLITE_ERROR
         BAD_ARG,
         NOT_INIT,
+        API_BADDATA,
     };
 
     struct error {
@@ -32,6 +33,13 @@ namespace url_manager{
         int scraped;
     };
 
+    /*
+        Used within the urlDB class for quick basic error handling of sqlite calls
+    */
+    #define SQLITE_CALL(func, db) \
+    if(func != SQLITE_OK) { \
+        std::cout << "SQLite error: " << sqlite3_errmsg(db); \
+    } \
     
     /*
         urlDB provides easy functions for creating and reading SQLITE database files containing wayback page URLs
@@ -49,6 +57,7 @@ namespace url_manager{
         ~urlDB();
         error create(const std::string& dbPath);
         error addDomain(const std::string& domain);
+        error enableTOR(const int port);
     };
 
 }

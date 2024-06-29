@@ -6,6 +6,9 @@
 #include "torInstance.hpp"
 
 
+/*
+    Basic functions for working with CURL
+*/
 namespace curl_helper{
 
     enum errEnum : char {
@@ -13,13 +16,13 @@ namespace curl_helper{
         GENERIC_ERR,
         CURL_ERR,
         TIMEOUT,
+        TOR_FAIL,
     };
 
     struct error {
         errEnum errcode;
         std::string errmsg;
     };
-
 
     /*
         Abstracts the CURL C API as well as providing the ability to route through TOR
