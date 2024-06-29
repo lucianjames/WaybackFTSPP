@@ -22,7 +22,7 @@ manticore::error manticore::manticoreDB::basicQueryExec(const std::string& query
 }
 
 void manticore::manticoreDB::setTableName(const std::string& name){
-
+    this->tablename = name;
 }
 
 manticore::error manticore::manticoreDB::connect(){
