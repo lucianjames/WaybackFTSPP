@@ -11,6 +11,7 @@ Work in progress software for indexing entire archives of sites (or sections of 
   - [X] cURL class
   - [X] Add functionality to sqlite class to get filtered results from db file 
   - [ ] Manticore connection class
+    - [ ] Add required functions to cURL helper class
   - [ ] Page parsing (get readable text for parsing)
   - [ ] Insert parsed page data into manticore DB
 - [ ] Search functionality
@@ -18,3 +19,4 @@ Work in progress software for indexing entire archives of sites (or sections of 
   - [ ] Output results nicely
   - [ ] Advanced search features
 - [X] Option to route through TOR
+- [ ] Write good documentation
