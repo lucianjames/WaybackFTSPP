@@ -22,20 +22,27 @@ int main(int argc, char** argv){
         return 1;
     }
 
-    std::string outfilePath = argv[1];
-
+    /*
+        Create DB file
+    */
     url_manager::urlDB udb;
-    url_manager::error res = udb.create(outfilePath);
+    url_manager::error res = udb.create(argv[1]);
     if(res.errcode != url_manager::errEnum::OK){
         std::cout << "ERR: udb.create(outfilePath): " << res.errmsg << std::endl;
         return 1;
     }
 
+    /*
+        Check if TOR should be used
+    */
     if(std::string(argv[argc-1]) == "--tor"){
         udb.enableTOR(9051);
         argc--;
     }
 
+    /*
+        Iterate through domains and add their results to the DB
+    */
     std::vector<std::string> domains;
     for(int i=2; i<argc; i++){
         res = udb.addDomain(argv[i]);
