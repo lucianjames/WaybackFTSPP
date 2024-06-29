@@ -1,6 +1,5 @@
 #include "urlManager.hpp"
 
-
 /*
     sqlite3 cleanup
 */
@@ -10,7 +9,6 @@ url_manager::urlDB::~urlDB(){
         //sqlite3_free(this->db);
     }
 }
-
 
 
 /*
@@ -25,15 +23,19 @@ url_manager::error url_manager::urlDB::create(const std::string& dbPath){
         return error{.errcode=SQLITE_ERR, .errmsg="Failed to create db"};
     }
 
+    const std::string sql_create_table = "CREATE TABLE URLS(" \
+                                            "URL TEXT NOT NULL, " \
+                                            "TIMESTAMP TEXT NOT NULL, " \
+                                            "MIMETYPE TEXT NOT NULL, " \
+                                            "SCRAPED INT NOT NULL);"; // Used by scraper program to mark
     char* zErrMsg = 0; // Does this need freeing manually?
-    if(sqlite3_exec(this->db, this->sql_create_table.c_str(), NULL, 0, &zErrMsg) != SQLITE_OK){
+    if(sqlite3_exec(this->db, sql_create_table.c_str(), NULL, 0, &zErrMsg) != SQLITE_OK){
         return error{.errcode=SQLITE_ERR, .errmsg=std::string("Failed to create table. SQL Error: ") + std::string(zErrMsg)};
     }
     free(zErrMsg); // Probably
 
     return error{.errcode=OK, .errmsg=""};
 }
-
 
 
 /*
@@ -84,9 +86,9 @@ url_manager::error url_manager::urlDB::addDomain(const std::string& domain){
     */
     SQLITE_CALL(sqlite3_exec(this->db, "PRAGMA synchronous = OFF", NULL, NULL, NULL), this->db); // Removes safety and checks, makes things go zoom zoom
     SQLITE_CALL(sqlite3_exec(this->db, "BEGIN TRANSACTION", NULL, NULL, NULL), this->db);
-    const char* sql = "INSERT INTO URLS (URL, TIMESTAMP, MIMETYPE, SCRAPED) VALUES (?, ?, ?, ?);";
+    const char* sql_insert = "INSERT INTO URLS (URL, TIMESTAMP, MIMETYPE, SCRAPED) VALUES (?, ?, ?, ?);";
     sqlite3_stmt* stmt;
-    SQLITE_CALL(sqlite3_prepare_v2(db, sql, -1, &stmt, NULL), this->db);
+    SQLITE_CALL(sqlite3_prepare_v2(db, sql_insert, -1, &stmt, NULL), this->db);
     for(const auto& page : cdxDataParsed){
         sqlite3_bind_text(stmt, 1, page.url.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_text(stmt, 2, page.timestamp.c_str(), -1, SQLITE_STATIC);
@@ -101,6 +103,10 @@ url_manager::error url_manager::urlDB::addDomain(const std::string& domain){
     return error{.errcode=OK, .errmsg=""};
 }
 
+
+/*
+    Enable tor in this class's curl helper instance
+*/
 url_manager::error url_manager::urlDB::enableTOR(const int port){
     curl_helper::error res = this->ch.enableTOR(port);
     if(res.errcode == curl_helper::OK){

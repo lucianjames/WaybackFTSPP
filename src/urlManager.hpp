@@ -47,11 +47,6 @@ namespace url_manager{
     class urlDB {
     private:
         sqlite3* db = NULL;
-        const std::string sql_create_table = "CREATE TABLE URLS(" \
-                                                "URL TEXT NOT NULL, " \
-                                                "TIMESTAMP TEXT NOT NULL, " \
-                                                "MIMETYPE TEXT NOT NULL, " \
-                                                "SCRAPED INT NOT NULL);"; // Used by scraper program to mark
         curl_helper::curlHelper ch;
     public:
         ~urlDB();
