@@ -1,3 +1,7 @@
+#ifndef URLMANAGER_HPP
+#define URLMANAGER_HPP
+
+
 #include <string>
 #include <filesystem>
 #include <sstream>
@@ -70,3 +74,5 @@ namespace url_manager{
     };
 
 }
+
+#endif

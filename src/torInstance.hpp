@@ -1,3 +1,6 @@
+#ifndef TORINSTANCE_HPP
+#define TORINSTANCE_HPP
+
 #include <iostream>
 #include <string>
 #include <stdio.h>
@@ -44,3 +47,5 @@ namespace TOR{
     };
 
 }
+
+#endif

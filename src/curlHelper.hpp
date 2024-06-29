@@ -1,9 +1,13 @@
+#ifndef CURLHELPER_HPP
+#define CURLHELPER_HPP
+
 #include <string>
 #include <vector>
 
 #include <curl/curl.h>
 
 #include "torInstance.hpp"
+#include "URLUtils.hpp"
 
 
 /*
@@ -33,11 +37,15 @@ namespace curl_helper{
         std::string userAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20100101 Firefox/10.0";
         const int failTimeout = 5;
         TOR::torInstance torInstance;
-        static size_t curlWriteCallback(void* contents, size_t size, size_t nmemb, void* userp);
-    
+        static size_t curlWriteCallback_bin(void* contents, size_t size, size_t nmemb, void* userp);
+        static size_t curlWriteCallback_str(char* contents, size_t size, size_t nmemb, void* userp);
+
     public:
         error enableTOR(const int port);
         error downloadFile(const std::string& url, std::vector<char>& curlReadBuffer, int retries=5);
+        error manticoreQuery(const std::string& serverAddr, const std::string& query, std::string& readBuffer);
     };
 
 }
+
+#endif

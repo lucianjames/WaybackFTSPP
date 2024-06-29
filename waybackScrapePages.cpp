@@ -1,5 +1,5 @@
 #include "src/urlManager.hpp"
-
+#include "src/manticore.hpp"
 
 int main(int argc, char** argv){
     if(argc < 3){
@@ -35,5 +35,12 @@ int main(int argc, char** argv){
         std::cout << "| Mimetype: " << e.mimetype << " | Scraped: " << e.scraped << " | https://web.archive.org/web/" << e.timestamp << "/" << e.url << " |\n";
     }
 
+
+    manticore::manticoreDB db;
+    db.setTableName(argv[1]);
+    manticore::error dbcres = db.connect(); // With default server addr 127.0.0.1:9308
+    if(dbcres.errcode != manticore::errEnum::OK){
+        std::cout << "ERR: db.connect(): " << dbcres.errmsg << std::endl;
+    }
     return 0;
 }
