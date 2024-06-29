@@ -10,31 +10,41 @@
 
 #include <iostream>
 #include <string>
+#include <string.h>
 
 #include "src/urlManager.hpp"
 
 
 
 int main(int argc, char** argv){
-    /*
-        Get cmdline args
-    */
     if(argc < 3){
-        std::cout << "Usage: ./WaybackGetUrls <output filename> <domain1> <domain2> ... <domainN>\n";
+        std::cout << "Usage: ./WaybackGetUrls <output filename> <domain1> <domain2> ... <domainN> --tor (optional)\n";
         return 1;
     }
+
     std::string outfilePath = argv[1];
-    std::string domain = argv[2];
-    // TOOOODOOOO HANDLE N DOMAINS INSTEAD OF JUST 1 !!!!!!!
 
     url_manager::urlDB udb;
-
     url_manager::error res = udb.create(outfilePath);
     if(res.errcode != url_manager::errEnum::OK){
         std::cout << "ERR: udb.create(outfilePath): " << res.errmsg << std::endl;
+        return 1;
     }
 
-    res = udb.addDomain(domain);
+    if(std::string(argv[argc-1]) == "--tor"){
+        udb.enableTOR(9051);
+        argc--;
+    }
 
+    std::vector<std::string> domains;
+    for(int i=2; i<argc; i++){
+        res = udb.addDomain(argv[i]);
+        if(res.errcode != url_manager::errEnum::OK){
+            std::cout << "ERR: udb.addDomain(argv[i]): " << res.errmsg << std::endl;
+            return 1;
+        }
+    }
+
+    std::cout << "Complete." << std::endl;
     return 0;
 }
