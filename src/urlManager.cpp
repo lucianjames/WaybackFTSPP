@@ -42,6 +42,9 @@ url_manager::error url_manager::urlDB::create(const std::string& dbPath){
     Opens an existing waybackFTSPP url db file
 */
 url_manager::error url_manager::urlDB::open(const std::string& dbPath){
+    if(!std::filesystem::exists(dbPath)){
+        return error{.errcode=BAD_ARG, .errmsg="file at dbPath does not exist"};
+    }
     if(sqlite3_open(dbPath.c_str(), &this->db)){
         return error{.errcode=SQLITE_ERR, .errmsg="Failed to open db"};
     }
