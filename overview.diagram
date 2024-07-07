@@ -1,0 +1,113 @@
+<mxfile host="app.diagrams.net" modified="2024-07-01T15:22:51.994Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" etag="cQzLidFRqBZhol6sNtgq" version="23.1.5" type="device">
+  <diagram name="Page-1" id="mZaGRloXNSP7PZ9MuxLg">
+    <mxGraphModel dx="2059" dy="1384" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="NApHz8mMEJy3DS_by5LD-3" value="" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-1" target="NApHz8mMEJy3DS_by5LD-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-1" value="torInstance.hpp" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="131" y="-12" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-5" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-2" target="NApHz8mMEJy3DS_by5LD-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-7" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-2" target="NApHz8mMEJy3DS_by5LD-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-36" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-2" target="NApHz8mMEJy3DS_by5LD-8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="110" y="242" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-2" value="curlHelper.hpp" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="61" y="87" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-11" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-4" target="NApHz8mMEJy3DS_by5LD-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-14" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-4" target="NApHz8mMEJy3DS_by5LD-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-4" value="manticore.hpp" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="148" y="186" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-10" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-6" target="NApHz8mMEJy3DS_by5LD-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-12" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-6" target="NApHz8mMEJy3DS_by5LD-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-6" value="urlManager.hpp" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-59" y="186" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-8" value="waybackScrapePages" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="138" y="285" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-9" value="waybackGetUrls" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-59" y="285" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-13" value="waybackSearch" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="349" y="285" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-32" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;strokeColor=default;shape=link;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-15" target="NApHz8mMEJy3DS_by5LD-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-15" value="&lt;h1&gt;Stage 1:&lt;/h1&gt;&lt;div&gt;Obtain a list of URLs from the wayback archive API&lt;/div&gt;" style="text;html=1;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-94" y="554" width="190" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-33" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;shape=link;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-16" target="NApHz8mMEJy3DS_by5LD-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-16" value="&lt;h1&gt;Stage 2:&lt;/h1&gt;&lt;div&gt;Archive the pages at all of the given URLs&lt;/div&gt;" style="text;html=1;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="113" y="554" width="190" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-34" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;shape=link;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-17" target="NApHz8mMEJy3DS_by5LD-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-17" value="&lt;h1&gt;Stage 3:&lt;/h1&gt;&lt;div&gt;Perform full text search on the scraped pages to uncover things that you cant find via traditional search engines!&lt;/div&gt;" style="text;html=1;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="314" y="554" width="190" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-19" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-18" target="NApHz8mMEJy3DS_by5LD-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-18" value="URLUtils.hpp" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-24" y="-12" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-20" value="SQlite DB file" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="42" y="425" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-23" value="" style="endArrow=none;dashed=1;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-20" target="NApHz8mMEJy3DS_by5LD-8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="294" y="419" as="sourcePoint" />
+            <mxPoint x="344" y="369" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-25" value="" style="endArrow=none;dashed=1;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-20" target="NApHz8mMEJy3DS_by5LD-9">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-27" y="557" as="sourcePoint" />
+            <mxPoint x="23" y="507" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-26" value="Manticore DB instance" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="259" y="425" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-27" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-8" target="NApHz8mMEJy3DS_by5LD-26">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="102" y="657" as="sourcePoint" />
+            <mxPoint x="152" y="607" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NApHz8mMEJy3DS_by5LD-28" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="NApHz8mMEJy3DS_by5LD-13" target="NApHz8mMEJy3DS_by5LD-26">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="185" y="627" as="sourcePoint" />
+            <mxPoint x="235" y="577" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
