@@ -34,6 +34,7 @@ int main(int argc, char** argv){
     for(const auto& e : urlInfoFromSqlite){
         std::cout << "| Mimetype: " << e.mimetype << " | Scraped: " << e.scraped << " | https://web.archive.org/web/" << e.timestamp << "/" << e.url << " |\n";
     }
+    std::cout << "Total entries: " << urlInfoFromSqlite.size() << "\n";
 
 
     manticore::manticoreDB db;
@@ -41,6 +42,11 @@ int main(int argc, char** argv){
     manticore::error dbcres = db.connect(); // With default server addr 127.0.0.1:9308
     if(dbcres.errcode != manticore::errEnum::OK){
         std::cout << "ERR: db.connect(): " << dbcres.errmsg << std::endl;
+    } 
+
+    manticore::error dbInsertRes = db.addPage("tes't", "t'e'st", "te''s't", "te''s''t", "t'e's'''t");
+    if(dbInsertRes.errcode != manticore::errEnum::OK){
+        std::cout << "ERR: db.addPage(): " << dbInsertRes.errmsg << std::endl;
     }
     return 0;
 }
