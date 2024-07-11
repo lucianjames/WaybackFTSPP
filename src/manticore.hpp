@@ -2,6 +2,7 @@
 #define MANTICORE_HPP
 
 #include <string>
+#include <unordered_map>
 
 #include <json/json.h>
 
@@ -28,13 +29,13 @@ namespace manticore{
         Json::Reader jsonReader;
         std::string tablename = "waybackFTSPP_pages";
         Json::Value jsonParse(const std::string& json);
+        std::string sanitiseStr(const std::string& str);
         error basicQueryExec(const std::string& query);
     public:
         void setTableName(const std::string& name);
         void setServerURL(const std::string& url);
         error connect();
         error addPage(const std::string& url, const std::string& wayback_timestamp, const std::string& title, const std::string& parsed_text_content, const std::string& html);
-
     };
 
 }

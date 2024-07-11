@@ -1,11 +1,14 @@
 #include "src/urlManager.hpp"
 #include "src/manticore.hpp"
+#include "src/curlHelper.hpp"
 
 int main(int argc, char** argv){
     if(argc < 3){
         std::cout << "Usage: ./WaybackScrapePages <ManticoreTableName> <URLs sqlite file> --tor (optional)\n";
         return 1;
     }
+
+    //const int n_threads = 8; // TODO make adjustable via cmdline
 
     /*
         Open DB file
@@ -37,16 +40,34 @@ int main(int argc, char** argv){
     std::cout << "Total entries: " << urlInfoFromSqlite.size() << "\n";
 
 
+    // Download + parse a page to test
+    curl_helper::curlHelper ch;
+    if(std::string(argv[argc-1]) == "--tor"){
+        ch.enableTOR(9051);
+    }
+    curl_helper::parsedPage pageData;
+    ch.getParsedPage("https://web.archive.org/web/" + urlInfoFromSqlite[0].timestamp + "/" + urlInfoFromSqlite[0].url, pageData);
+
+    std::cout << "===========\n";
+    std::cout << pageData.title << "\n";
+    std::cout << "===========\n";
+    std::cout << pageData.text << "\n";
+    std::cout << "===========\n";
+    std::cout << pageData.raw << "\n";
+    std::cout << "===========\n";
+
+    /*
     manticore::manticoreDB db;
     db.setTableName(argv[1]);
     manticore::error dbcres = db.connect(); // With default server addr 127.0.0.1:9308
     if(dbcres.errcode != manticore::errEnum::OK){
         std::cout << "ERR: db.connect(): " << dbcres.errmsg << std::endl;
-    } 
+    }
 
     manticore::error dbInsertRes = db.addPage("tes't", "t'e'st", "te''s't", "te''s''t", "t'e's'''t");
     if(dbInsertRes.errcode != manticore::errEnum::OK){
         std::cout << "ERR: db.addPage(): " << dbInsertRes.errmsg << std::endl;
     }
+    */
     return 0;
 }

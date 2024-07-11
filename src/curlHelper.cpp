@@ -12,6 +12,83 @@ size_t curl_helper::curlHelper::curlWriteCallback_str(char* contents, size_t siz
     return size * nmemb;
 }
 
+curl_helper::error curl_helper::curlHelper::htmlTreeGetTitle(xmlDoc* doc, xmlNodePtr node, std::string& titleBuff){
+    xmlNodePtr currentNode = NULL;
+    for(currentNode = node; currentNode; currentNode = currentNode->next){ // For every node in the tree
+        if(currentNode->type == XML_ELEMENT_NODE && !xmlStrcmp(currentNode->name, (const xmlChar*)"title")){
+            titleBuff = (char*)xmlNodeListGetString(doc, currentNode->xmlChildrenNode, 1);
+            return error{.errcode=OK, .errmsg=""};
+        }
+        if(currentNode->children != NULL){
+            this->htmlTreeGetTitle(doc, currentNode->children, titleBuff); // Recurse
+        }
+    }
+    return error{.errcode=OK, .errmsg="No title found"};
+}
+
+curl_helper::error curl_helper::curlHelper::htmlTreeGetText(xmlNodePtr node, std::string& textBuff){
+    xmlNodePtr curNode = NULL;
+    for(curNode = node; curNode; curNode = curNode->next){ // For each node in the tree
+        if(curNode->type == XML_TEXT_NODE){ // If this node is a text node, slap its content into the buffer
+            textBuff += (char*)curNode->content;
+        }
+        if(curNode->children != NULL){
+            this->htmlTreeGetText(curNode->children, textBuff); // Recurse
+        }
+    }
+    return error{.errcode=OK, .errmsg=""};
+}
+
+/*
+    !!! Remember to free parser with xmlFreeDoc(parser->myDoc); htmlFreeParserCtxt(parser);
+*/
+curl_helper::error curl_helper::curlHelper::htmlParse(const std::string& pageSrc, htmlParserCtxtPtr& parser){
+    parser = htmlCreatePushParserCtxt(NULL, NULL, NULL, 0, NULL, XML_CHAR_ENCODING_NONE);
+    if(parser == NULL){
+        return error{.errcode=LIBXML_FAIL, .errmsg="Failed to create libxml2 HTML parser"};
+    }
+    if(htmlCtxtUseOptions(parser, HTML_PARSE_RECOVER | HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING) != 0){
+        return error{.errcode=LIBXML_FAIL, .errmsg="Failed to set parser options"};
+    }
+    htmlParseChunk(parser, pageSrc.c_str(), pageSrc.size(), 0);
+    htmlParseChunk(parser, NULL, 0, 1);
+    if(parser->myDoc == NULL){
+        xmlFreeDoc(parser->myDoc);
+        htmlFreeParserCtxt(parser);
+        return error{.errcode=LIBXML_NULLDOC, .errmsg="Null document"};
+    }
+    return error{.errcode=OK, .errmsg=""};
+}
+
+curl_helper::error curl_helper::curlHelper::getTitleFromPage(const std::string& pageSrc, std::string& titleOut){
+    htmlParserCtxtPtr parser;
+    error parseRes = this->htmlParse(pageSrc, parser);
+    if(parseRes.errcode != OK){
+        return parseRes;
+    }
+
+    titleOut = "";
+    this->htmlTreeGetTitle(parser->myDoc, parser->myDoc->children, titleOut);
+
+    xmlFreeDoc(parser->myDoc);
+    htmlFreeParserCtxt(parser);
+    return error{.errcode=OK, .errmsg=""};
+}
+
+curl_helper::error curl_helper::curlHelper::getTextFromPage(const std::string& pageSrc, std::string& textOut){
+    htmlParserCtxtPtr parser;
+    error parseRes = this->htmlParse(pageSrc, parser);
+    if(parseRes.errcode != OK){
+        return parseRes;
+    }
+
+    textOut = "";
+    this->htmlTreeGetText(parser->myDoc->children, textOut);
+
+    xmlFreeDoc(parser->myDoc);
+    htmlFreeParserCtxt(parser);
+    return error{.errcode=OK, .errmsg=""};
+}
 
 curl_helper::error curl_helper::curlHelper::enableTOR(const int port){
     this->torInstance.setPort(port);
@@ -22,7 +99,6 @@ curl_helper::error curl_helper::curlHelper::enableTOR(const int port){
         return error{.errcode=TOR_FAIL, .errmsg=res.errmsg};
     }
 }
-
 
 curl_helper::error curl_helper::curlHelper::downloadFile(const std::string& url, std::vector<char>& curlReadBuffer, int retries){
     int retriesStart = retries;
@@ -77,5 +153,19 @@ curl_helper::error curl_helper::curlHelper::manticoreQuery(const std::string& se
     if(res != CURLE_OK){
         return error{.errcode=CURL_ERR, .errmsg="Curl error: " + std::string(curl_easy_strerror(res))};
     }
+    return error{.errcode=OK, .errmsg=""};
+}
+
+curl_helper::error curl_helper::curlHelper::getParsedPage(const std::string& url, curl_helper::parsedPage& out){
+    std::vector<char> buff;
+    this->downloadFile(url, buff);
+    
+    std::string page;
+    page.assign(buff.begin(), buff.end()); // Convert to std::string, assumes valid plaintext html
+    out.raw = page;
+
+    this->getTitleFromPage(page, out.title);
+    this->getTextFromPage(page, out.text);
+
     return error{.errcode=OK, .errmsg=""};
 }

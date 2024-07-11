@@ -8,6 +8,38 @@ Json::Value manticore::manticoreDB::jsonParse(const std::string& json){
     return root;
 }
 
+std::string manticore::manticoreDB::sanitiseStr(const std::string& str) {
+    std::unordered_map<char, std::string> replacements = {
+        {'\'', "{{APOSTROPHE}}"},
+        {'"', "{{QUOTE}}"},
+        {';', "{{SEMICOLON}}"},
+        {'\\', "{{BACKSLASH}}"},
+        {'*', "{{ASTERISK}}"},
+        {'=', "{{EQUAL}}"},
+        {'(', "{{LPAREN}}"},
+        {')', "{{RPAREN}}"},
+        {'<', "{{LT}}"},
+        {'>', "{{GT}}"},
+        {'!', "{{EXCLAMATION}}"},
+        {'/', "{{SLASH}}"},
+        {'-', "{{DASH}}"}
+    };
+
+    std::string res;
+    res.reserve(str.size()); // Only perfect if no replacements need to be inserted
+
+    for (const char& ch : str) {
+        auto it = replacements.find(ch);
+        if (it != replacements.end()) {
+            res += it->second;
+        } else {
+            res += ch;
+        }
+    }
+
+    return res;
+}
+
 manticore::error manticore::manticoreDB::basicQueryExec(const std::string& query){
     std::string manticoreRes;
     this->ch.manticoreQuery(this->manticoreServerURL, query, manticoreRes);
@@ -37,23 +69,13 @@ manticore::error manticore::manticoreDB::connect(){
     return createTableRes;
 }
 
-std::string sanitiseStr(const std::string& str){
-    std::string res = str;
-    for(size_t i=0; i<res.size(); i++){
-        if(res[i] == '\''){
-            res.erase(i, 1);
-            res.insert(i, "{{APOSTROPHE}}");
-        }
-    }
-    return res;
-}
 
 manticore::error manticore::manticoreDB::addPage(const std::string& url, const std::string& wayback_timestamp, const std::string& title, const std::string& parsed_text_content, const std::string& html){
-    std::string url_sanitised = sanitiseStr(url);
-    std::string wayback_timestamp_sanisised = sanitiseStr(wayback_timestamp);
-    std::string title_sanitised = sanitiseStr(title);
-    std::string parsed_text_sanitised = sanitiseStr(parsed_text_content);
-    std::string html_sanitised = sanitiseStr(html);
+    std::string url_sanitised = this->sanitiseStr(url);
+    std::string wayback_timestamp_sanisised = this->sanitiseStr(wayback_timestamp);
+    std::string title_sanitised = this->sanitiseStr(title);
+    std::string parsed_text_sanitised = this->sanitiseStr(parsed_text_content);
+    std::string html_sanitised = this->sanitiseStr(html);
 
     // Todo ensure no page is inserted twice?
 
