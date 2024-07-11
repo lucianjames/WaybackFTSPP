@@ -24,13 +24,16 @@ url_manager::error url_manager::urlDB::create(const std::string& dbPath){
     }
 
     const std::string sql_create_table = "CREATE TABLE URLS(" \
+                                            "ID INTEGER PRIMARY KEY, " \
                                             "URL TEXT NOT NULL, " \
                                             "TIMESTAMP TEXT NOT NULL, " \
                                             "MIMETYPE TEXT NOT NULL, " \
                                             "SCRAPED INT NOT NULL);"; // Used by scraper program to mark
     char* zErrMsg = 0; // Does this need freeing manually?
     if(sqlite3_exec(this->db, sql_create_table.c_str(), NULL, 0, &zErrMsg) != SQLITE_OK){
-        return error{.errcode=SQLITE_ERR, .errmsg=std::string("Failed to create table. SQL Error: ") + std::string(zErrMsg)};
+        std::string err = std::string(zErrMsg);
+        free(zErrMsg);
+        return error{.errcode=SQLITE_ERR, .errmsg=std::string("Failed to create table. SQL Error: ") + err};
     }
     free(zErrMsg); // Probably
 
@@ -88,6 +91,7 @@ url_manager::error url_manager::urlDB::addDomain(const std::string& domain){
             return error{.errcode=API_BADDATA, .errmsg="Unexpected number of tokens in line while parsing cdxData"};
         }
         cdxDataParsed.push_back(dbEntry{
+            .rowID = -1, // We dont insert rowID into the db manually, it being a primary key means sqlite does that work for us
             .url = tokens[2],
             .timestamp = tokens[1],
             .mimetype = tokens[0],
@@ -144,10 +148,11 @@ url_manager::error url_manager::urlDB::getData(std::vector<dbEntry>& out, bool u
 
     while(sqlite3_step(stmt) == SQLITE_ROW){
         dbEntry e;
-        e.url = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
-        e.timestamp = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
-        e.mimetype = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
-        e.scraped = sqlite3_column_int(stmt, 3);
+        e.rowID = sqlite3_column_int(stmt, 0);
+        e.url = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
+        e.timestamp = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+        e.mimetype = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+        e.scraped = sqlite3_column_int(stmt, 4);
 
         bool allowed_mimetype = false;
         if(allowed_mimetypes.size() > 0){ // if allowed_mimetypes is empty, then no filtering is to be applied
@@ -161,6 +166,23 @@ url_manager::error url_manager::urlDB::getData(std::vector<dbEntry>& out, bool u
 
     }
     SQLITE_CALL(sqlite3_finalize(stmt), this->db);
+
+    return error{.errcode=OK, .errmsg=""};
+}
+
+
+url_manager::error url_manager::urlDB::setScraped(const int ID, const bool val){
+
+    const std::string sql_update_record = std::string("UPDATE URLS " \
+                                                      "SET SCRAPED = ") + (val? "1" : "0") + " WHERE ID = " + std::to_string(ID) + ";";
+
+    char* zErrMsg = 0;
+    if(sqlite3_exec(this->db, sql_update_record.c_str(), NULL, 0, &zErrMsg) != SQLITE_OK){
+        std::string err = std::string(zErrMsg);
+        free(zErrMsg);
+        return error{.errcode=SQLITE_ERR, .errmsg=std::string("Failed to update record. SQL Error: ") + err};
+    }
+    free(zErrMsg);
 
     return error{.errcode=OK, .errmsg=""};
 }

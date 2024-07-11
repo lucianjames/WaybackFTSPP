@@ -57,6 +57,14 @@ int main(int argc, char** argv){
     std::cout << "===========\n";
 
     /*
+        Indicate that the page has been scraped, so that it doesnt get re-scraped in future
+    */
+    res = udb.setScraped(urlInfoFromSqlite[0].rowID, true);
+    if(res.errcode != url_manager::errEnum::OK){
+        std::cout << "ERR: " << res.errmsg << std::endl;
+    }
+
+    /*
     manticore::manticoreDB db;
     db.setTableName(argv[1]);
     manticore::error dbcres = db.connect(); // With default server addr 127.0.0.1:9308

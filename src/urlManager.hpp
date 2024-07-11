@@ -31,6 +31,7 @@ namespace url_manager{
     };
 
     struct dbEntry {
+        int rowID;
         std::string url;
         std::string timestamp;
         std::string mimetype;
@@ -71,6 +72,7 @@ namespace url_manager{
         error addDomain(const std::string& domain);
         error enableTOR(const int port);
         error getData(std::vector<dbEntry>& out, bool unscraped_only, const std::vector<std::string>& allowed_mimetypes);
+        error setScraped(const int ID, const bool val);
     };
 
 }
