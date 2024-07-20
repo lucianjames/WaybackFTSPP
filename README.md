@@ -22,3 +22,4 @@ Work in progress software for indexing entire archives of sites (or sections of 
   - [ ] Advanced search features
 - [X] Option to route through TOR
 - [ ] Write good documentation
+- [ ] Fix all the function calls where returned errors arent handled
