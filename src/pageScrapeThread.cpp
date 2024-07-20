@@ -60,6 +60,7 @@ pageScraping::error pageScraping::pageScrapeThread::scrapePages(const std::vecto
             if(res.errcode != OK){
                 return res;
             }
+            std::cout << "Scraped page " << p.url << " with timestamp " << p.timestamp << std::endl;
         }
     }
 
