@@ -57,6 +57,10 @@ void manticore::manticoreDB::setTableName(const std::string& name){
     this->tablename = name;
 }
 
+void manticore::manticoreDB::setServerURL(const std::string& URL){
+    this->manticoreServerURL = URL;
+}
+
 manticore::error manticore::manticoreDB::connect(){
     manticore::error createTableRes = this->basicQueryExec("CREATE TABLE IF NOT EXISTS " + this->tablename + "("
                                                                              "id bigint,"

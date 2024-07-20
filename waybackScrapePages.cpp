@@ -1,6 +1,6 @@
 #include "src/urlManager.hpp"
-#include "src/manticore.hpp"
-#include "src/curlHelper.hpp"
+#include "src/pageScrapeThread.hpp"
+
 
 int main(int argc, char** argv){
     if(argc < 3){
@@ -34,48 +34,12 @@ int main(int argc, char** argv){
         std::cout << "ERR: " << res.errmsg << std::endl;
     }
 
-    for(const auto& e : urlInfoFromSqlite){
-        std::cout << "| Mimetype: " << e.mimetype << " | Scraped: " << e.scraped << " | https://web.archive.org/web/" << e.timestamp << "/" << e.url << " |\n";
-    }
-    std::cout << "Total entries: " << urlInfoFromSqlite.size() << "\n";
+    pageScraping::pageScrapeThread pst;
+    pst.enableTor(9051);
+    pst.setTableName(argv[1]); // This is mostly required
+    pst.udbOpen(argv[2]); // This is required
 
-
-    // Download + parse a page to test
-    curl_helper::curlHelper ch;
-    if(std::string(argv[argc-1]) == "--tor"){
-        ch.enableTOR(9051);
-    }
-    curl_helper::parsedPage pageData;
-    ch.getParsedPage("https://web.archive.org/web/" + urlInfoFromSqlite[0].timestamp + "/" + urlInfoFromSqlite[0].url, pageData);
-
-    std::cout << "===========\n";
-    std::cout << pageData.title << "\n";
-    std::cout << "===========\n";
-    std::cout << pageData.text << "\n";
-    std::cout << "===========\n";
-    std::cout << pageData.raw << "\n";
-    std::cout << "===========\n";
-
-    /*
-        Indicate that the page has been scraped, so that it doesnt get re-scraped in future
-    */
-    res = udb.setScraped(urlInfoFromSqlite[0].rowID, true);
-    if(res.errcode != url_manager::errEnum::OK){
-        std::cout << "ERR: " << res.errmsg << std::endl;
-    }
-
-    
-    manticore::manticoreDB db;
-    db.setTableName(argv[1]);
-    manticore::error dbcres = db.connect(); // With default server addr 127.0.0.1:9308
-    if(dbcres.errcode != manticore::errEnum::OK){
-        std::cout << "ERR: db.connect(): " << dbcres.errmsg << std::endl;
-    }
-
-    manticore::error dbInsertRes = db.addPage(urlInfoFromSqlite[0].url, urlInfoFromSqlite[0].timestamp, pageData.title, pageData.text, pageData.raw);
-    if(dbInsertRes.errcode != manticore::errEnum::OK){
-        std::cout << "ERR: db.addPage(): " << dbInsertRes.errmsg << std::endl;
-    }
+    pst.scrapePage(urlInfoFromSqlite[69]);
     
     return 0;
 }
