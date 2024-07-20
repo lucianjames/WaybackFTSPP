@@ -64,7 +64,7 @@ int main(int argc, char** argv){
         std::cout << "ERR: " << res.errmsg << std::endl;
     }
 
-    /*
+    
     manticore::manticoreDB db;
     db.setTableName(argv[1]);
     manticore::error dbcres = db.connect(); // With default server addr 127.0.0.1:9308
@@ -72,10 +72,10 @@ int main(int argc, char** argv){
         std::cout << "ERR: db.connect(): " << dbcres.errmsg << std::endl;
     }
 
-    manticore::error dbInsertRes = db.addPage("tes't", "t'e'st", "te''s't", "te''s''t", "t'e's'''t");
+    manticore::error dbInsertRes = db.addPage(urlInfoFromSqlite[0].url, urlInfoFromSqlite[0].timestamp, pageData.title, pageData.text, pageData.raw);
     if(dbInsertRes.errcode != manticore::errEnum::OK){
         std::cout << "ERR: db.addPage(): " << dbInsertRes.errmsg << std::endl;
     }
-    */
+    
     return 0;
 }
