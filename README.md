@@ -14,7 +14,7 @@ Work in progress software for indexing entire archives of sites (or sections of 
     - [X] Add required functions to cURL helper class
   - [X] Page parsing (get readable text for parsing)
   - [X] Insert parsed page data into manticore DB
-  - [ ] Batch operation page scraping
+  - [X] Batch operation page scraping
   - [ ] Multithreaded page scraping
 - [ ] Search functionality
   - [ ] Expand manticore class to have search features

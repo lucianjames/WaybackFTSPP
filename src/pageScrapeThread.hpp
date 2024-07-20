@@ -34,6 +34,7 @@ namespace pageScraping{
         void setTableName(const std::string& name); // ^
         error udbOpen(const std::string& dbPath); // To access func of this->udb
         error scrapePage(const url_manager::dbEntry& page);
+        error scrapePages(const std::vector<url_manager::dbEntry>& pageVec);
     };
 
 }

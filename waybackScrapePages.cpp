@@ -39,11 +39,8 @@ int main(int argc, char** argv){
     pst.setTableName(argv[1]); // This is mostly required
     pst.udbOpen(argv[2]); // This is required
 
-    for(auto& u : urlInfoFromSqlite){
-        if(u.scraped == false){
-            pst.scrapePage(u);
-        }
-    }
-    
+    pageScraping::error scrapeRes = pst.scrapePages(urlInfoFromSqlite);
+    std::cout << scrapeRes.errmsg << std::endl;
+
     return 0;
 }
