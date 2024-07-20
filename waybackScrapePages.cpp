@@ -39,7 +39,11 @@ int main(int argc, char** argv){
     pst.setTableName(argv[1]); // This is mostly required
     pst.udbOpen(argv[2]); // This is required
 
-    pst.scrapePage(urlInfoFromSqlite[69]);
+    for(auto& u : urlInfoFromSqlite){
+        if(u.scraped == false){
+            pst.scrapePage(u);
+        }
+    }
     
     return 0;
 }
