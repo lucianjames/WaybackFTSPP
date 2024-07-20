@@ -7,7 +7,7 @@ Work in progress software for indexing entire archives of sites (or sections of 
   - [X] cURL class
   - [X] Parse downloaded API results into db file
   - [ ] Better command line options
-- [ ] Download pages from sqlite url DB into manticore instance
+- [X] Download pages from sqlite url DB into manticore instance
   - [X] cURL class
   - [X] Add functionality to sqlite class to get filtered results from db file 
   - [X] Manticore connection class
