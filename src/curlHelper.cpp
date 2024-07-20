@@ -158,7 +158,10 @@ curl_helper::error curl_helper::curlHelper::manticoreQuery(const std::string& se
 
 curl_helper::error curl_helper::curlHelper::getParsedPage(const std::string& url, curl_helper::parsedPage& out){
     std::vector<char> buff;
-    this->downloadFile(url, buff);
+    error downloadFileRes = this->downloadFile(url, buff);
+    if(downloadFileRes.errcode != OK){
+        return downloadFileRes;
+    }
     
     std::string page;
     page.assign(buff.begin(), buff.end()); // Convert to std::string, assumes valid plaintext html

@@ -23,6 +23,7 @@ namespace url_manager{
         BAD_ARG,
         NOT_INIT,
         API_BADDATA,
+        CURL_FAIL,
     };
 
     struct error {
