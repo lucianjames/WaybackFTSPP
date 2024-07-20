@@ -35,7 +35,9 @@ int main(int argc, char** argv){
     }
 
     pageScraping::pageScrapeThread pst;
-    pst.enableTor(9051);
+    if(std::string(argv[argc-1]) == "--tor"){
+        pst.enableTor(9051);
+    }    
     pst.setTableName(argv[1]); // This is mostly required
     pst.udbOpen(argv[2]); // This is required
 
