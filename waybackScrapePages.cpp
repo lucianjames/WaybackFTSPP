@@ -21,8 +21,6 @@ int main(int argc, char** argv){
         return 1;
     }
 
-    //const int n_threads = 8; // TODO make adjustable via cmdline
-
     /*
         Open DB file
     */
@@ -47,25 +45,12 @@ int main(int argc, char** argv){
         std::cout << "ERR: " << res.errmsg << std::endl;
     }
 
-    pageScraping::pageScrapeThread pst;
-       
-    pst.setTableName(argv[1]); // This is mostly required
-    pst.udbOpen(argv[2]); // This is required
-
-    //pageScraping::error scrapeRes = pst.scrapePages(urlInfoFromSqlite);
-    //std::cout << scrapeRes.errmsg << std::endl;
-
-    const int n_threads = 2;
+    const int n_threads = 8; // HARCODED BAD
     int chunkSize = urlInfoFromSqlite.size() / n_threads;
     int chunkR = urlInfoFromSqlite.size() % n_threads;
-
-    std::cout << urlInfoFromSqlite.size() << std::endl;
-    std::cout << chunkSize << std::endl;
-    std::cout << chunkR << std::endl;
-
     /*
         This isnt optimal by any means, lots of copying which shouldnt be done.
-        However, 99.99% of the execution time of this program will be downloading data so it doesnt really matter.
+        However, 99.99%+ of the execution time of this program will be downloading data so it doesnt really matter.
         You could do some tricks with iterators to avoid doing this if you really wanted it to be perfect
     */
     std::vector<std::vector<url_manager::dbEntry>> urlInfoChunks;
@@ -76,19 +61,18 @@ int main(int argc, char** argv){
         }
     }
 
-    for(auto& chnk : urlInfoChunks){
-        std::cout << chnk.size() << std::endl;
-    }
-
-    std::vector<std::thread> scrapeThreads;
-    int torPort = -1;
+    /*
+        Start some threads up scraping each element in the urlInfoChunk vector
+    */
+    int torPort = -1; // -1 = dont use tor, kinda messy way of doing it
     if(std::string(argv[argc-1]) == "--tor"){
-        torPort = 9051;
+        torPort = 9051; // Sensible default port
     } 
+    std::vector<std::thread> scrapeThreads;
     for(int i=0; i<n_threads; i++){
         scrapeThreads.emplace_back(scrapeThreadFunc, urlInfoChunks[i], argv[1], argv[2], torPort); // Hardcode bad this is just test
         if(torPort != -1){
-            torPort++;
+            torPort++; // Increment so we get a fresh instance of TOR (thus a fresh IP) for every thread
         }
     }
 
