@@ -15,7 +15,8 @@ Work in progress software for indexing entire archives of sites (or sections of 
   - [X] Page parsing (get readable text for parsing)
   - [X] Insert parsed page data into manticore DB
   - [X] Batch operation page scraping
-  - [ ] Multithreaded page scraping
+  - [X] Multithreaded page scraping
+    - [ ] Improve multithreading
 - [ ] Search functionality
   - [ ] Expand manticore class to have search features
   - [ ] Output results nicely
