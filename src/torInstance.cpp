@@ -10,7 +10,7 @@ void TOR::torInstance::createTorrc(){
     std::ofstream torrcFile(this->torrcPath);
     torrcFile << "SocksPort " << this->port << std::endl;
     torrcFile << "DataDirectory ./torData/torData" + std::to_string(this->port) << std::endl;
-    //torrcFile << "Log notice file /dev/null" << std::endl; // Don't display those ugly warn/info messages // Keeping them on for now for debugging
+    torrcFile << "Log notice file /dev/null" << std::endl; // Don't display those ugly warn/info messages
     torrcFile.close();
 }
 
