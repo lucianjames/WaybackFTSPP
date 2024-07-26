@@ -45,6 +45,9 @@ int main(int argc, char** argv){
         std::cout << "ERR: " << res.errmsg << std::endl;
     }
 
+    /*
+        Set up data for multi-threaded scraping
+    */
     const int n_threads = 8; // HARCODED BAD
     int chunkSize = urlInfoFromSqlite.size() / n_threads;
     int chunkR = urlInfoFromSqlite.size() % n_threads;
@@ -76,6 +79,9 @@ int main(int argc, char** argv){
         }
     }
 
+    /*
+        Wait for them all to be done
+    */
     for (auto& t : scrapeThreads) {
         t.join();
     }
