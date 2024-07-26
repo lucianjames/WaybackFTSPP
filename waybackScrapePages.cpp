@@ -48,16 +48,14 @@ int main(int argc, char** argv){
     }
 
     pageScraping::pageScrapeThread pst;
-    if(std::string(argv[argc-1]) == "--tor"){
-        pst.enableTor(9051);
-    }    
+       
     pst.setTableName(argv[1]); // This is mostly required
     pst.udbOpen(argv[2]); // This is required
 
     //pageScraping::error scrapeRes = pst.scrapePages(urlInfoFromSqlite);
     //std::cout << scrapeRes.errmsg << std::endl;
 
-    const int n_threads = 8;
+    const int n_threads = 2;
     int chunkSize = urlInfoFromSqlite.size() / n_threads;
     int chunkR = urlInfoFromSqlite.size() % n_threads;
 
@@ -83,9 +81,15 @@ int main(int argc, char** argv){
     }
 
     std::vector<std::thread> scrapeThreads;
-
+    int torPort = -1;
+    if(std::string(argv[argc-1]) == "--tor"){
+        torPort = 9051;
+    } 
     for(int i=0; i<n_threads; i++){
-        scrapeThreads.emplace_back(scrapeThreadFunc, urlInfoChunks[i], argv[1], argv[2], 9051); // Hardcode bad this is just test
+        scrapeThreads.emplace_back(scrapeThreadFunc, urlInfoChunks[i], argv[1], argv[2], torPort); // Hardcode bad this is just test
+        if(torPort != -1){
+            torPort++;
+        }
     }
 
     for (auto& t : scrapeThreads) {

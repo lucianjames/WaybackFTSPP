@@ -32,7 +32,7 @@ std::string manticore::manticoreDB::sanitiseStr(const std::string& str) {
         auto it = replacements.find(ch);
         if (it != replacements.end()) {
             res += it->second;
-        } else {
+        } else if(std::isprint(ch)){
             res += ch;
         }
     }
