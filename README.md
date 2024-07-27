@@ -23,6 +23,6 @@ Work in progress software for indexing entire archives of sites (or sections of 
   - [ ] Advanced search features
 - [X] Option to route through TOR
 - [ ] Write good documentation
-- [ ] Fix all the function calls where returned errors arent handled
+- [ ] Fix *all* the function calls where returned errors arent handled
 - [ ] Detection +exclusion of binary files (sometimes wayback mimetype is wrong)
   - [ ] Or alternatively, handle various binary file types properly (parse them)
