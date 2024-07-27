@@ -22,6 +22,15 @@ namespace manticore{
         std::string errmsg;
     };
 
+    struct pageEntry {
+        unsigned long long ID;
+        std::string url;
+        std::string wayback_timestamp;
+        std::string title;
+        std::string parsed_text_content;
+        std::string html;
+    };
+
     class manticoreDB{
     private:
         std::string manticoreServerURL = "127.0.0.1:9308";
@@ -30,12 +39,15 @@ namespace manticore{
         std::string tablename = "waybackFTSPP_pages";
         Json::Value jsonParse(const std::string& json);
         std::string sanitiseStr(const std::string& str);
+        std::string unSanitiseStr(const std::string& str);
         error basicQueryExec(const std::string& query);
+        error basicQueryExec(const std::string& query, Json::Value& manticoreRes_parsed_out);
     public:
         void setTableName(const std::string& name);
         void setServerURL(const std::string& url);
         error connect();
         error addPage(const std::string& url, const std::string& wayback_timestamp, const std::string& title, const std::string& parsed_text_content, const std::string& html);
+        error search(const std::string& query, std::vector<pageEntry>& results_out);
     };
 
 }

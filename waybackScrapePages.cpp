@@ -59,7 +59,7 @@ int main(int argc, char** argv){
     std::vector<std::vector<url_manager::dbEntry>> urlInfoChunks;
     urlInfoChunks.resize(n_threads);
     for(int i=0; i<n_threads; i++){
-        for(int j=(i==n_threads-1 ? -chunkR : 0); j<chunkSize; j++){
+        for(int j=(i==n_threads-1 ? -chunkR : 0); j<chunkSize; j++){ // Negative chunk remainder on last thread to make sure the remaining pieces of data still get processed
             urlInfoChunks[i].push_back(urlInfoFromSqlite[(i*chunkSize)+j]);
         }
     }
@@ -73,7 +73,7 @@ int main(int argc, char** argv){
     } 
     std::vector<std::thread> scrapeThreads;
     for(int i=0; i<n_threads; i++){
-        scrapeThreads.emplace_back(scrapeThreadFunc, urlInfoChunks[i], argv[1], argv[2], torPort); // Hardcode bad this is just test
+        scrapeThreads.emplace_back(scrapeThreadFunc, urlInfoChunks[i], argv[1], argv[2], torPort);
         if(torPort != -1){
             torPort++; // Increment so we get a fresh instance of TOR (thus a fresh IP) for every thread
         }
