@@ -3,8 +3,8 @@
 #include "src/manticore.hpp"
 
 int main(int argc, char** argv){
-    if(argc < 3){
-        std::cout << "Usage: ./WaybackScrapePages <ManticoreTableName> <Search query>\n";
+    if(argc < 5){
+        std::cout << "Usage: ./WaybackScrapePages <ManticoreTableName> <Search query> <n results> <page>\n";
         return 1;
     }
 
@@ -14,15 +14,7 @@ int main(int argc, char** argv){
     db.connect();
 
     std::vector<manticore::pageEntry> results;
-
-    std::cout << "page 1:\n";
-    db.search(argv[2], results, 5, 0);
-    for(const auto& r : results){
-        std::cout << r.wayback_timestamp << " | " << r.url << std::endl;
-    }
-    results.clear();
-    std::cout << "page 2:\n";
-    db.search(argv[2], results, 5, 1);
+    db.search(argv[2], results, std::stoi(argv[3]), std::stoi(argv[4]));
     for(const auto& r : results){
         std::cout << r.wayback_timestamp << " | " << r.url << std::endl;
     }
