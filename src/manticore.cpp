@@ -60,21 +60,23 @@ std::string manticore::manticoreDB::unSanitiseStr(const std::string& str) {
         {"{{DASH}}", "-"}
     };
 
-    std::string mod_str = str;
-    std::cout << mod_str.size() << std::endl;
+    std::string mod_str;
 
-    for(size_t i=0; i<mod_str.size(); i++){
-        if(mod_str[i] == '{'){
-            size_t tagLen = mod_str.find_first_of("}}", i) - i + 2;
-            std::string tag = mod_str.substr(i, tagLen);
-            auto it = replacements.find(tag);
-            if(it != replacements.end()){
-                // BAD UNOPTIMISED SLOW CODE FIX LATER
-                mod_str.erase(i, tagLen);
-                mod_str.insert(i, it->second);
-                i += it->second.length()-1;
+    for(size_t i=0; i<str.size(); i++){
+        if(str[i] == '{'){
+            size_t tagLen = str.find_first_of("}}", i) - i + 2;
+            std::string tag = str.substr(i, tagLen);
+            auto r_it = replacements.find(tag);
+            if(r_it != replacements.end()){
+                mod_str += r_it->second;
+                i += r_it->first.length()-1;
+            }else{
+                mod_str += str[i];
             }
+        }else{
+            mod_str += str[i];
         }
+
     }
 
     return mod_str;
