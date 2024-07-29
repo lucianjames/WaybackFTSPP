@@ -17,10 +17,11 @@ Work in progress software for indexing entire archives of sites (or sections of 
   - [X] Batch operation page scraping
   - [X] Multithreaded page scraping
     - [ ] Improve multithreading
-- [ ] Search functionality
-  - [ ] Expand manticore class to have search features
+- [~] Search functionality
+  - [X] Expand manticore class to have search features
   - [ ] Output results nicely
   - [ ] Advanced search features
+  - [ ] Figure out how to combine proper pagination and grouping together multiple timestamps of the same page nicely
 - [X] Option to route through TOR
 - [ ] Write good documentation
 - [ ] Fix *all* the function calls where returned errors arent handled
