@@ -19,6 +19,9 @@ Work in progress software for indexing entire archives of sites (or sections of 
 - [~] Search functionality
   - [X] Expand manticore class to have search features
   - [ ] Output results nicely
+  - [ ] Web
+    - [ ] Display results in web browser
+    - [ ] Fully interactive search through web page
   - [ ] Advanced search features
   - [ ] Figure out how to combine proper pagination and grouping together multiple timestamps of the same page nicely
 - [X] Option to route through TOR
