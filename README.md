@@ -6,7 +6,6 @@ Work in progress software for indexing entire archives of sites (or sections of 
   - [X] URL sqlite file handling class
   - [X] cURL class
   - [X] Parse downloaded API results into db file
-  - [ ] Better command line options
 - [X] Download pages from sqlite url DB into manticore instance
   - [X] cURL class
   - [X] Add functionality to sqlite class to get filtered results from db file 
@@ -27,3 +26,4 @@ Work in progress software for indexing entire archives of sites (or sections of 
 - [ ] Fix *all* the function calls where returned errors arent handled
 - [ ] Detection +exclusion of binary files (sometimes wayback mimetype is wrong)
   - [ ] Or alternatively, handle various binary file types properly (parse them)
+- [ ] Better command line options/handling
