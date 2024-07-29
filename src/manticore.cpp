@@ -145,10 +145,12 @@ manticore::error manticore::manticoreDB::addPage(const std::string& url, const s
 }
 
 
-manticore::error manticore::manticoreDB::search(const std::string& query, std::vector<pageEntry>& results_out){
+manticore::error manticore::manticoreDB::search(const std::string& query, std::vector<pageEntry>& results_out, const int n_results){
     Json::Value json_res;
     std::string sanitised_query = this->sanitiseStr(query);
-    error bqe_res = this->basicQueryExec("SELECT * FROM " + this->tablename + " WHERE MATCH(\'" + sanitised_query + "\');", json_res);
+    error bqe_res = this->basicQueryExec(
+                                        "SELECT * FROM " + this->tablename + " WHERE MATCH(\'" + sanitised_query + "\') LIMIT " + std::to_string(n_results) + ";", 
+                                        json_res);
     if(bqe_res.errcode != OK){
         return error{.errcode=MANTICORE_ERR, .errmsg=bqe_res.errmsg};
     }

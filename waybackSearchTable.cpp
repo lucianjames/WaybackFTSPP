@@ -14,11 +14,12 @@ int main(int argc, char** argv){
     db.connect();
 
     std::vector<manticore::pageEntry> results;
-    db.search(argv[2], results);
+    db.search(argv[2], results, 256);
 
     for(const auto& r : results){
         std::cout << r.wayback_timestamp << " | " << r.url << std::endl;
     }
+    std::cout << results.size() << " results.\n";
 
     return 0;
 }

@@ -47,7 +47,7 @@ namespace manticore{
         void setServerURL(const std::string& url);
         error connect();
         error addPage(const std::string& url, const std::string& wayback_timestamp, const std::string& title, const std::string& parsed_text_content, const std::string& html);
-        error search(const std::string& query, std::vector<pageEntry>& results_out);
+        error search(const std::string& query, std::vector<pageEntry>& results_out, const int n_results);
     };
 
 }
