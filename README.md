@@ -30,3 +30,5 @@ Work in progress software for indexing entire archives of sites (or sections of 
 - [ ] Detection +exclusion of binary files (sometimes wayback mimetype is wrong)
   - [ ] Or alternatively, handle various binary file types properly (parse them)
 - [ ] Better command line options/handling
+
+- [ ] Hi everyone how are you doing please download my software and ill give you a like on twitter as a reward. Or instagram :p have an nice day folks i hoppe to fweal good when working with youy gyuys!! TY! Xx.
