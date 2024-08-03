@@ -1,11 +1,14 @@
+#include <cxxopts.hpp>
 #include "src/urlManager.hpp"
 #include "src/pageScrapeThread.hpp"
 
-
-void scrapeThreadFunc(const std::vector<url_manager::dbEntry>& data, const std::string& tableName, const std::string& dbPath, int enableTorPort){
+/*
+    Function run by each scraper thread
+*/
+void scrapeThreadFunc(const std::vector<url_manager::dbEntry>& data, const std::string& tableName, const std::string& dbPath, bool useTor, int torPort){
     pageScraping::pageScrapeThread pst;
-    if(enableTorPort != -1){
-        pst.enableTor(enableTorPort);
+    if(useTor){
+        pst.enableTor(torPort);
     }
     pst.setTableName(tableName);
     pst.udbOpen(dbPath);
@@ -16,16 +19,38 @@ void scrapeThreadFunc(const std::vector<url_manager::dbEntry>& data, const std::
 
 
 int main(int argc, char** argv){
-    if(argc < 3){
-        std::cout << "Usage: ./WaybackScrapePages <ManticoreTableName> <URLs sqlite file> --tor (optional)\n";
-        return 1;
+    /*
+        Handle arguments
+    */
+    cxxopts::Options options("WaybackScrapePages", "Scrape pages from archive.org based on an sqlite db of pages to scrape");
+    options.add_options()
+        ("t, table", "Manticore table name", cxxopts::value<std::string>())
+        ("f,db-file", "File containing URLs to scrape", cxxopts::value<std::string>())
+        ("tor", "Route requests through TOR", cxxopts::value<bool>()->default_value("false"))
+        ("tor-port", "Port to run TOR proxy on", cxxopts::value<int>()->default_value("9051"))
+        ("h,help", "Print usage");
+    auto result = options.parse(argc, argv);
+    // Handle printing help msg
+    if (result.count("help")) {
+        std::cout << options.help() << std::endl;
+        return 0;
     }
+    // Requred options
+    if(!result.count("table") || !result.count("db-file")){
+        std::cout << "Required arguments: --table, --db-file. Use --help for more information\n";
+        return 0;
+    }
+    // Extract command line arguments
+    std::string table = result["table"].as<std::string>();
+    std::string dbPath = result["db-file"].as<std::string>();
+    bool useTor = result["tor"].as<bool>();
+    int torPort = result["tor-port"].as<int>();
 
     /*
         Open DB file
     */
     url_manager::urlDB udb;
-    url_manager::error res = udb.open(argv[2]);
+    url_manager::error res = udb.open(dbPath);
     if(res.errcode != url_manager::errEnum::OK){
         std::cout << "ERR: udb.open(dbPath): " << res.errmsg << std::endl;
         return 1;
@@ -51,11 +76,9 @@ int main(int argc, char** argv){
     const int n_threads = 8; // HARCODED BAD
     int chunkSize = urlInfoFromSqlite.size() / n_threads;
     int chunkR = urlInfoFromSqlite.size() % n_threads;
-    /*
-        This isnt optimal by any means, lots of copying which shouldnt be done.
-        However, 99.99%+ of the execution time of this program will be downloading data so it doesnt really matter.
-        You could do some tricks with iterators to avoid doing this if you really wanted it to be perfect
-    */
+    // This isnt optimal by any means, lots of copying which shouldnt be done.
+    // However, 99.99%+ of the execution time of this program will be downloading data so it doesnt really matter.
+    // You could do some tricks with iterators to avoid doing this if you really wanted it to be perfect
     std::vector<std::vector<url_manager::dbEntry>> urlInfoChunks;
     urlInfoChunks.resize(n_threads);
     for(int i=0; i<n_threads; i++){
@@ -67,21 +90,14 @@ int main(int argc, char** argv){
     /*
         Start some threads up scraping each element in the urlInfoChunk vector
     */
-    int torPort = -1; // -1 = dont use tor, kinda messy way of doing it
-    if(std::string(argv[argc-1]) == "--tor"){
-        torPort = 9051; // Sensible default port
-    } 
     std::vector<std::thread> scrapeThreads;
     for(int i=0; i<n_threads; i++){
-        scrapeThreads.emplace_back(scrapeThreadFunc, urlInfoChunks[i], argv[1], argv[2], torPort);
+        scrapeThreads.emplace_back(scrapeThreadFunc, urlInfoChunks[i], table, dbPath, useTor, torPort);
         if(torPort != -1){
             torPort++; // Increment so we get a fresh instance of TOR (thus a fresh IP) for every thread
         }
     }
-
-    /*
-        Wait for them all to be done
-    */
+    // Wait for all threads to finish
     for (auto& t : scrapeThreads) {
         t.join();
     }

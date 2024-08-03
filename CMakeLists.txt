@@ -24,6 +24,8 @@ include_directories(${JSONCPP_INCLUDE_DIR})
 find_package(SQLite3 REQUIRED)
 include_directories(${SQLITE3_INCLUDE_DIRS})
 
+find_package(cxxopts REQUIRED)
+
 # src/ contains .cpp and .hpp files that are used by both the indexer and the search engine
 file(GLOB COMMON_SOURCES "src/*.cpp" "src/*.hpp")
 
@@ -33,7 +35,7 @@ add_executable(WaybackScrapePages ${COMMON_SOURCES} waybackScrapePages.cpp)
 add_executable(WaybackSearchTable ${COMMON_SOURCES} waybackSearchTable.cpp)
 
 
-set(LIBRARIES curl libxml2 jsoncpp sqlite3)
+set(LIBRARIES curl libxml2 jsoncpp sqlite3 cxxopts::cxxopts)
 set(TARGETS WaybackGetUrls 
             WaybackScrapePages
             WaybackSearchTable

@@ -16,7 +16,7 @@ url_manager::urlDB::~urlDB(){
 */
 url_manager::error url_manager::urlDB::create(const std::string& dbPath){
     if(std::filesystem::exists(dbPath)){
-        return error{.errcode=BAD_ARG, .errmsg="file at dbPath already exists"};
+        return error{.errcode=FILE_EXISTS, .errmsg="file at dbPath already exists"};
     }
 
     if(sqlite3_open(dbPath.c_str(), &this->db)){

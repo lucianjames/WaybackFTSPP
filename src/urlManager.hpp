@@ -21,6 +21,7 @@ namespace url_manager{
         GENERIC_ERR,
         SQLITE_ERR, // Maybe bad name, can be confused with SQLITE_ERROR
         BAD_ARG,
+        FILE_EXISTS,
         NOT_INIT,
         API_BADDATA,
         CURL_FAIL,

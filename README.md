@@ -29,4 +29,4 @@ Work in progress software for indexing entire archives of sites (or sections of 
 - [ ] Fix *all* the function calls where returned errors arent handled
 - [ ] Detection +exclusion of binary files (sometimes wayback mimetype is wrong)
   - [ ] Or alternatively, handle various binary file types properly (parse them)
-- [ ] Better command line options/handling
+- [X] Better command line options/handling
