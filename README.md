@@ -1,6 +1,48 @@
 # WaybackFullTextSearch++
 Work in progress software for indexing entire archives of sites (or sections of sites) from web.archive.org using manticore search.
 
+## Usage
+Very very quick overview, more details fully documenting will be added later
+### Step 1: Create sqlite DB file of url+timestamp combinations to scrape from archive.org
+`./WaybackGetUrls -o dbfilename.sqlite -d example.com`
+```
+Usage:
+  WaybackGetUrls [OPTION...]
+
+  -o, --output_file arg  Sqlite3 DB name
+  -d, --domain arg       Search query
+      --tor              Route requests through TOR
+      --tor-port arg     Port to run TOR proxy on (default: 9051)
+  -h, --help             Print usage
+```
+### Step 2: Scrape pages from archive.org
+This requires you have an instance of manticore search running on your machine
+`./WaybackScrapePages -f dbfilename.sqlite -t manticoreTableName`
+```
+Usage:
+  WaybackScrapePages [OPTION...]
+
+  -t, --table arg     Manticore table name
+  -f, --db-file arg   File containing URLs to scrape
+      --tor           Route requests through TOR
+      --tor-port arg  Port to run TOR proxy on (default: 9051)
+  -h, --help          Print usage
+```
+### Step 3: Search scraped and parsed data
+`/WaybackSeachTable -t manticoreTableName -q searchQuery`
+```
+Usage:
+  WaybackSearchTable [OPTION...]
+
+  -t, --table arg       Manticore table name
+  -q, --query arg       Search query
+  -n, --results arg     Number of results (default: 10)
+  -p, --page arg        Page number, starts at 0 (default: 0)
+  -s, --server-url arg  Manticore database URL (<ip>:<port>) (default:
+                        127.0.0.1:9308)
+  -h, --help            Print usage
+```
+
 ## TODO
 - [X] Download available page URLs from wayback API and store in sqlite file
   - [X] URL sqlite file handling class
