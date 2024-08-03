@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
         ("t,table", "Manticore table name", cxxopts::value<std::string>())
         ("q,query", "Search query", cxxopts::value<std::string>())
         ("n,results", "Number of results", cxxopts::value<int>()->default_value("10"))
-        ("p,page", "Page number", cxxopts::value<int>()->default_value("1"))
+        ("p,page", "Page number, starts at 0", cxxopts::value<int>()->default_value("0"))
         ("s,server-url", "Manticore database URL (<ip>:<port>)", cxxopts::value<std::string>()->default_value("127.0.0.1:9308"))
         ("h,help", "Print usage");
 
@@ -37,10 +37,13 @@ int main(int argc, char** argv) {
     manticore::manticoreDB db;
     db.setServerURL(serverUrl);
     db.setTableName(tableName);
-    db.connect();
 
     std::vector<manticore::pageEntry> results;
-    db.search(query, results, numResults, page);
+    manticore::error res = db.search(query, results, numResults, page);
+    if(res.errcode != manticore::errEnum::OK){
+        std::cout << "Search failed: " << res.errmsg << std::endl;
+        return 0;
+    }
 
     for (const auto& r : results) {
         std::cout << r.wayback_timestamp << " | " << r.url << std::endl;

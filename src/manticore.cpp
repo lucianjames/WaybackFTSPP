@@ -114,7 +114,7 @@ void manticore::manticoreDB::setServerURL(const std::string& URL){
 }
 
 
-manticore::error manticore::manticoreDB::connect(){
+manticore::error manticore::manticoreDB::setup(){
     manticore::error createTableRes = this->basicQueryExec("CREATE TABLE IF NOT EXISTS " + this->tablename + "("
                                                                              "id bigint,"
                                                                              "url text attribute,"

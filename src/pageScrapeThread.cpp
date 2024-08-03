@@ -39,7 +39,7 @@ pageScraping::error pageScraping::pageScrapeThread::scrapePage(const url_manager
         return error{.errcode=UDB_ERR, .errmsg=udbRes.errmsg};
     }
 
-    manticore::error dbCRes = this->db.connect(); // We dont know if we have connected already or not
+    manticore::error dbCRes = this->db.setup(); // We dont know if we have connected already or not
     if(dbCRes.errcode != manticore::errEnum::OK){
         return error{.errcode=MANTICORE_ERR, .errmsg=dbCRes.errmsg};
     }
