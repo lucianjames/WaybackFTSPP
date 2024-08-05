@@ -60,10 +60,11 @@ Usage:
     - [ ] Improve multithreading
 - [~] Search functionality
   - [X] Expand manticore class to have search features
-  - [ ] Output results nicely
-  - [ ] Web
-    - [ ] Display results in web browser
-    - [ ] Fully interactive search through web page
+  - [X] Output results nicely
+  - [X] Web
+    - [X] Display results in web browser
+    - [X] Fully interactive search through web page
+    - [ ] Perfect UI for ease/speed of use
   - [ ] Advanced search features
   - [ ] Figure out how to combine proper pagination and grouping together multiple timestamps of the same page nicely
 - [X] Option to route through TOR
