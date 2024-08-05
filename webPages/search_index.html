@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wayback Search</title>
+</head>
+<body>
+    <h1>Wayback Search</h1>
+    <form id="searchForm">
+        <input type="text" name="q" placeholder="Enter your search query..." required>
+        <input type="text" name="tn" placeholder="Enter manticore table to search..." required>
+        <button type="submit">Search</button>
+    </form>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Create an object to hold the form data
+            let formData = {
+                q: this.q.value,
+                tn: this.tn.value
+            };
+
+            // Convert the object to JSON
+            let jsonData = JSON.stringify(formData);
+
+            // Send the JSON data to the server
+            fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonData
+            })
+            .then(response => response.text()) // Assuming server returns raw HTML
+            .then(html => {
+                // Replace the current document's content with the new content
+                document.documentElement.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

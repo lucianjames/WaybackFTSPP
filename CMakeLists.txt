@@ -26,6 +26,9 @@ include_directories(${SQLITE3_INCLUDE_DIRS})
 
 find_package(cxxopts REQUIRED)
 
+find_package(PkgConfig)
+pkg_check_modules(Pistache REQUIRED IMPORTED_TARGET libpistache)
+
 # src/ contains .cpp and .hpp files that are used by both the indexer and the search engine
 file(GLOB COMMON_SOURCES "src/*.cpp" "src/*.hpp")
 
@@ -33,12 +36,13 @@ file(GLOB COMMON_SOURCES "src/*.cpp" "src/*.hpp")
 add_executable(WaybackGetUrls ${COMMON_SOURCES} waybackGetUrls.cpp)
 add_executable(WaybackScrapePages ${COMMON_SOURCES} waybackScrapePages.cpp)
 add_executable(WaybackSearchTable ${COMMON_SOURCES} waybackSearchTable.cpp)
+add_executable(WaybackWebSearch ${COMMON_SOURCES} waybackWebSearch.cpp)
 
-
-set(LIBRARIES curl libxml2 jsoncpp sqlite3 cxxopts::cxxopts)
+set(LIBRARIES curl libxml2 jsoncpp sqlite3 cxxopts::cxxopts PkgConfig::Pistache)
 set(TARGETS WaybackGetUrls 
             WaybackScrapePages
             WaybackSearchTable
+            WaybackWebSearch
 )
 
 foreach(target ${TARGETS})
@@ -46,3 +50,13 @@ foreach(target ${TARGETS})
     target_link_libraries(${target} ${LIBRARIES})
     target_compile_options(${target} PRIVATE -Wno-unused-parameter) # Due to sqlite callbacks requiring void unused params, thanks C
 endforeach()
+
+# Copy webpage templates to build dir
+set(TEMPLATES_SOURCE_DIR "${CMAKE_SOURCE_DIR}/webPages")
+set(TEMPLATES_DESTINATION_DIR "${CMAKE_BINARY_DIR}/webPages")
+add_custom_command(
+    TARGET WaybackWebSearch POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${TEMPLATES_SOURCE_DIR}"
+    "${TEMPLATES_DESTINATION_DIR}"
+)
