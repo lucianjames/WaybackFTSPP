@@ -11,7 +11,7 @@
 class SearchHandler : public Pistache::Http::Handler{
 private:
     void serveStaticFile(const std::string& fileName, Pistache::Http::ResponseWriter response);
-    std::string performWaybackSearch(const std::string& query, const std::string& tableName);
+    std::string performWaybackSearch(const std::string& query, const std::string& tableName, const int pageNum);
 public:
     HTTP_PROTOTYPE(SearchHandler)
     void onRequest(const Pistache::Http::Request& request, Pistache::Http::ResponseWriter response) override;
@@ -28,33 +28,40 @@ void SearchHandler::serveStaticFile(const std::string& fileName, Pistache::Http:
     }
 }
 
-std::string SearchHandler::performWaybackSearch(const std::string& query, const std::string& tableName){
+std::string SearchHandler::performWaybackSearch(const std::string& query, const std::string& tableName, const int pageNum){
+    // Setup
     int maxNumResults = 20;
-    int page = 0;
     std::string serverUrl = "127.0.0.1:9308";
-    
     manticore::manticoreDB db;
     db.setServerURL(serverUrl);
     db.setTableName(tableName);
 
+    /*
+        Perform search via manticore
+    */
     std::vector<manticore::pageEntry> results;
-    manticore::error res = db.search(query, results, maxNumResults, page);
+    manticore::error res = db.search(query, results, maxNumResults, pageNum);
     if(res.errcode != manticore::errEnum::OK){
         return "Search failed: " + res.errmsg;
     }
 
-    std::string resultsPage = "<!DOCTYPE html><html><head><title>Search Results</title></head><body>";
+    /*
+        Generate results cards
+    */
+    std::string resultCardsHTML;
     for(const auto& r : results){
-
-        resultsPage += "<div><h2><a href=\"https://web.archive.org/web/" + r.wayback_timestamp + "/" + r.url + "\">" 
-        + ((r.title.length() == 0)? "NO_TITLE" : r.title)
-        + "</a></h2>";
-
-        resultsPage += "<p> blah blah </p></div>";
+       resultCardsHTML += "<div class=\"result-card\">"
+                        "<h2><a href=\"https://web.archive.org/web/" + r.wayback_timestamp + "/" + r.url + "\">" + ((r.title.length() == 0)? r.url : r.title)
+                     + "</a></h2>";
+        resultCardsHTML += "<h4>" + r.wayback_timestamp + "</h4>";
+        resultCardsHTML += "<p>Page text extract</p>";
+        resultCardsHTML += "</div>";
     }
-    resultsPage += "</body></html>";
 
-    return resultsPage;
+    /*
+        The clientside code will insert the result cards to where they need to go
+    */
+    return resultCardsHTML;
 }
 
 void SearchHandler::onRequest(const Pistache::Http::Request& request, Pistache::Http::ResponseWriter response){
@@ -65,10 +72,10 @@ void SearchHandler::onRequest(const Pistache::Http::Request& request, Pistache::
             Handle GET requests
         */
         if (method == Pistache::Http::Method::Get) {
-            if (path == "/") {
+            if(path == "/") {
                 serveStaticFile("webPages/search_index.html", std::move(response));
-            } else {
-                response.send(Pistache::Http::Code::Not_Found, "404");
+            }else{
+                serveStaticFile("webPages/" + path, std::move(response));
             }
         } 
         /*
@@ -85,7 +92,7 @@ void SearchHandler::onRequest(const Pistache::Http::Request& request, Pistache::
                     throw std::runtime_error("Failed to parse JSON: " + json);
                 }
                 // Perform search
-                std::string resultPage = this->performWaybackSearch(root["q"].asString(), root["tn"].asString());
+                std::string resultPage = this->performWaybackSearch(root["q"].asString(), root["tn"].asString(), root["p"].asInt());
                 response.send(Pistache::Http::Code::Ok, resultPage);
             } else {
                 response.send(Pistache::Http::Code::Not_Found, "404");

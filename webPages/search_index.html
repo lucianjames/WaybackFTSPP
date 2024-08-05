@@ -1,45 +1,207 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Wayback Search</title>
+    <title>WaybackFTS++</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212; /* Dark background for the whole page */
+            color: #e0e0e0; /* Light text color for contrast */
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box; /* Ensure padding is included in total height */
+        }
+
+        .container {
+            background-color: #1e1e1e; /* Dark background for the container */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Deeper shadow for better contrast */
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            margin-top: 20px; /* Space from the top */
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #00e676; /* Green accent color for the heading */
+        }
+
+        a {
+            color: #00d36d; /* Change to a green color */
+            text-decoration: none; /* Optional: Remove underline from links */
+        }
+
+        a:hover {
+            color: #12e981; /* Lighter green on hover */
+            text-decoration: underline; /* Optional: Add underline on hover */
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between form elements */
+        }
+
+        /* Textboxes */
+        input[type="text"] {
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 25px; /* Rounded corners */
+            font-size: 1em;
+            background-color: #2c2c2c; /* Dark background for input */
+            color: #e0e0e0; /* Light text color for input */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); /* Soft shadow for input focus */
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #00e676; /* Green accent color on focus */
+            box-shadow: 0 2px 8px rgba(0, 230, 118, 0.3); /* Highlight focus state with green */
+        }
+
+        /* Autofill styles */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active{
+            background-color: #2c2c2c !important; /* Dark background for autofill */
+            color: #e0e0e0 !important; /* Light text color for autofill */
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            background-color: #00e676; /* Green background color */
+            color: #121212; /* Dark text color for button */
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            margin-top: 10px; /* Space from the form elements */
+        }
+
+        button:hover {
+            background-color: #00c853; /* Darker green on hover */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Slight shadow on hover */
+        }
+
+        #resultsSection {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .result-card {
+            background: #1e1e1e; /* Dark background for result cards */
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Deeper shadow for result cards */
+        }
+
+        .result-card h2 {
+            margin: 0;
+            font-size: 1.6em;
+            color: #00e676; /* Green accent color for card titles */
+        }
+
+        .result-card p {
+            margin: 10px 0 0;
+            color: #b0b0b0; /* Lighter gray text for readability */
+            font-size: 1em;
+        }
+        .pagination-controls {
+            margin-top: 20px;
+        }
+
+        .pagination-controls button {
+            padding: 10px 15px;
+            border: 1px solid #333;
+            border-radius: 25px;
+            background-color: #2c2c2c; /* Dark background for pagination buttons */
+            color: #e0e0e0; /* Light text color for pagination buttons */
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        .pagination-controls button:disabled {
+            background-color: #444; /* Disabled button style */
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
-    <h1>Wayback Search</h1>
-    <form id="searchForm">
-        <input type="text" name="q" placeholder="Enter your search query..." required>
-        <input type="text" name="tn" placeholder="Enter manticore table to search..." required>
-        <button type="submit">Search</button>
-    </form>
+    <div class="container">
+        <h1>WaybackFTS++</h1>
+        <form id="searchForm">
+            <input type="text" name="q" placeholder="Enter your search query..." required>
+            <input type="text" name="tn" placeholder="Enter manticore table to search..." required>
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
+    <div id="resultsSection">
+        <!-- Results will be inserted here -->
+    </div>
+
+    <div class="pagination-controls">
+        <button id="prevPage" disabled>Previous</button>
+        <button id="nextPage" disabled>Next</button>
+    </div>
+    
     <script>
-        document.getElementById('searchForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
+        let currentPage = 0; // Initialize current page
 
-            // Create an object to hold the form data
+        function updateResults(page) {
             let formData = {
-                q: this.q.value,
-                tn: this.tn.value
+                q: document.querySelector('[name="q"]').value,
+                tn: document.querySelector('[name="tn"]').value,
+                p: page
             };
 
-            // Convert the object to JSON
-            let jsonData = JSON.stringify(formData);
-
-            // Send the JSON data to the server
             fetch('/search', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: jsonData
+                body: JSON.stringify(formData)
             })
             .then(response => response.text()) // Assuming server returns raw HTML
             .then(html => {
-                // Replace the current document's content with the new content
-                document.documentElement.innerHTML = html;
+                document.querySelector('#resultsSection').innerHTML = html;
+
+                // Enable/disable pagination buttons
+                document.querySelector('#prevPage').disabled = (page <= 0);
+                document.querySelector('#nextPage').disabled = false; // Adjust based on server response
             })
             .catch(error => {
                 console.error('Error:', error);
             });
+        }
+
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            updateResults(currentPage); // Fetch results for the current page
+        });
+
+        document.getElementById('prevPage').addEventListener('click', function() {
+            if (currentPage > 0) {
+                currentPage--;
+                updateResults(currentPage);
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', function() {
+            currentPage++;
+            updateResults(currentPage);
         });
     </script>
 </body>
