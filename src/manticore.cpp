@@ -172,3 +172,19 @@ manticore::error manticore::manticoreDB::search(const std::string& query, std::v
 
     return error{.errcode=OK, .errmsg=""};
 }
+
+
+manticore::error manticore::manticoreDB::getTables(std::vector<std::string>& out){
+    Json::Value json_res;
+    std::string query = "SELECT table_name FROM information_schema.tables;";
+    error bqe_res = this->basicQueryExec(query, json_res);
+    if(bqe_res.errcode != OK){
+        return error{.errcode=MANTICORE_ERR, .errmsg=bqe_res.errmsg};
+    }
+
+    for(const auto& table : json_res[0]["data"]){
+        out.push_back(table["TABLE_NAME"].asString());
+    }
+
+    return error{.errcode=OK, .errmsg=""};
+}

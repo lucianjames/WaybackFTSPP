@@ -19,11 +19,11 @@ public:
 
 void SearchHandler::serveStaticFile(const std::string& fileName, Pistache::Http::ResponseWriter response){
     std::ifstream file(fileName);
-    if (file.is_open()) {
+    if(file.is_open()){
         std::stringstream buffer;
         buffer << file.rdbuf();
         response.send(Pistache::Http::Code::Ok, buffer.str());
-    } else {
+    }else{
         response.send(Pistache::Http::Code::Internal_Server_Error, "Error opening file.");
     }
 }
@@ -71,9 +71,24 @@ void SearchHandler::onRequest(const Pistache::Http::Request& request, Pistache::
         /*
             Handle GET requests
         */
-        if (method == Pistache::Http::Method::Get) {
-            if(path == "/") {
+        if (method == Pistache::Http::Method::Get){
+            if(path == "/"){
                 serveStaticFile("webPages/search_index.html", std::move(response));
+            }else if(path == "/tables"){
+                std::vector<std::string> tables;
+                manticore::manticoreDB db;
+                db.getTables(tables);
+
+                std::string tableJson = "{\"tables\": [";
+                for(int i=0; i<tables.size(); i++){
+                    tableJson += "\"" + tables[i] + "\"";
+                    if(i != tables.size()-1){
+                        tableJson += ", ";
+                    }
+                }
+                tableJson += "]}";
+
+                response.send(Pistache::Http::Code::Ok, tableJson);
             }else{
                 serveStaticFile("webPages/" + path, std::move(response));
             }
@@ -81,8 +96,8 @@ void SearchHandler::onRequest(const Pistache::Http::Request& request, Pistache::
         /*
             Handle POST requests
         */
-        else if (method == Pistache::Http::Method::Post) {
-            if (path == "/search") {
+        else if (method == Pistache::Http::Method::Post){
+            if(path == "/search"){
                 // Parse query + table name json params
                 std::string json = request.body();
                 Json::Reader jsonReader;
@@ -94,14 +109,14 @@ void SearchHandler::onRequest(const Pistache::Http::Request& request, Pistache::
                 // Perform search
                 std::string resultPage = this->performWaybackSearch(root["q"].asString(), root["tn"].asString(), root["p"].asInt());
                 response.send(Pistache::Http::Code::Ok, resultPage);
-            } else {
+            } else{
                 response.send(Pistache::Http::Code::Not_Found, "404");
             }
         }
         /*
             Handle unsupported requests
         */
-        else {
+        else{
             response.send(Pistache::Http::Code::Method_Not_Allowed, "405");
         }
 }
