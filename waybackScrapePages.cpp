@@ -27,7 +27,8 @@ int main(int argc, char** argv){
         ("t, table", "Manticore table name", cxxopts::value<std::string>())
         ("f,db-file", "File containing URLs to scrape", cxxopts::value<std::string>())
         ("tor", "Route requests through TOR", cxxopts::value<bool>()->default_value("false"))
-        ("tor-port", "Port to run TOR proxy on", cxxopts::value<int>()->default_value("9051"))
+        ("tor-port", "Port to run TOR proxy on (increments by 1 for each thread)", cxxopts::value<int>()->default_value("9051"))
+        ("n-threads", "Number of threads to use", cxxopts::value<int>()->default_value("1"))
         ("h,help", "Print usage");
     auto result = options.parse(argc, argv);
     // Handle printing help msg
@@ -45,6 +46,7 @@ int main(int argc, char** argv){
     std::string dbPath = result["db-file"].as<std::string>();
     bool useTor = result["tor"].as<bool>();
     int torPort = result["tor-port"].as<int>();
+    int n_threads = result["n-threads"].as<int>();
 
     /*
         Open DB file
@@ -73,7 +75,6 @@ int main(int argc, char** argv){
     /*
         Set up data for multi-threaded scraping
     */
-    const int n_threads = 8; // HARCODED BAD
     int chunkSize = urlInfoFromSqlite.size() / n_threads;
     int chunkR = urlInfoFromSqlite.size() % n_threads;
     // This isnt optimal by any means, lots of copying which shouldnt be done.
@@ -93,9 +94,7 @@ int main(int argc, char** argv){
     std::vector<std::thread> scrapeThreads;
     for(int i=0; i<n_threads; i++){
         scrapeThreads.emplace_back(scrapeThreadFunc, urlInfoChunks[i], table, dbPath, useTor, torPort);
-        if(torPort != -1){
-            torPort++; // Increment so we get a fresh instance of TOR (thus a fresh IP) for every thread
-        }
+        torPort++; // Increment so we get a fresh instance of TOR (thus a fresh IP) for every thread
     }
     // Wait for all threads to finish
     for (auto& t : scrapeThreads) {
