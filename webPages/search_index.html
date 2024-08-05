@@ -159,12 +159,17 @@
     
     <script>
         let currentPage = 0; // Initialize current page
+        let prevSearch = "";
 
-        function updateResults(page) {
+        function updateResults() {
+            if (prevSearch != document.querySelector('[name="q"]').value){
+                prevSearch = document.querySelector('[name="q"]').value;
+                currentPage = 0;
+            }
             let formData = {
                 q: document.querySelector('[name="q"]').value,
                 tn: document.querySelector('[name="tn"]').value,
-                p: page
+                p: currentPage
             };
 
             fetch('/search', {
@@ -179,7 +184,7 @@
                 document.querySelector('#resultsSection').innerHTML = html;
 
                 // Enable/disable pagination buttons
-                document.querySelector('#prevPage').disabled = (page <= 0);
+                document.querySelector('#prevPage').disabled = (currentPage <= 0);
                 document.querySelector('#nextPage').disabled = false; // Adjust based on server response
             })
             .catch(error => {
@@ -189,19 +194,19 @@
 
         document.getElementById('searchForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent the default form submission
-            updateResults(currentPage); // Fetch results for the current page
+            updateResults(); // Fetch results for the current page
         });
 
         document.getElementById('prevPage').addEventListener('click', function() {
             if (currentPage > 0) {
                 currentPage--;
-                updateResults(currentPage);
+                updateResults();
             }
         });
 
         document.getElementById('nextPage').addEventListener('click', function() {
             currentPage++;
-            updateResults(currentPage);
+            updateResults();
         });
     </script>
 </body>

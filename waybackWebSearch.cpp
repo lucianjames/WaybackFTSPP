@@ -54,7 +54,7 @@ std::string SearchHandler::performWaybackSearch(const std::string& query, const 
                         "<h2><a href=\"https://web.archive.org/web/" + r.wayback_timestamp + "/" + r.url + "\">" + ((r.title.length() == 0)? r.url : r.title)
                      + "</a></h2>";
         resultCardsHTML += "<h4>" + r.wayback_timestamp + "</h4>";
-        resultCardsHTML += "<p>Page text extract</p>";
+        resultCardsHTML += "<p>" + r.highlighted_content + "</p>";
         resultCardsHTML += "</div>";
     }
 

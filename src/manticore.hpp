@@ -29,6 +29,7 @@ namespace manticore{
         std::string title;
         std::string parsed_text_content;
         std::string html;
+        std::string highlighted_content;
     };
 
     class manticoreDB{

@@ -149,14 +149,13 @@ manticore::error manticore::manticoreDB::search(const std::string& query, std::v
     Json::Value json_res;
     std::string sanitised_query = this->sanitiseStr(query);
     error bqe_res = this->basicQueryExec(
-                                        "SELECT * FROM " + this->tablename + " WHERE MATCH(\'" + sanitised_query + "\') LIMIT " + std::to_string(n_results_pp) + " OFFSET " + std::to_string(page*n_results_pp) + ";", 
+                                        "SELECT *, HIGHLIGHT() FROM " + this->tablename + " WHERE MATCH(\'" + sanitised_query + "\') LIMIT " + std::to_string(n_results_pp) + " OFFSET " + std::to_string(page*n_results_pp) + ";", 
                                         json_res);
     if(bqe_res.errcode != OK){
         return error{.errcode=MANTICORE_ERR, .errmsg=bqe_res.errmsg};
     }
 
     // Parse json result shit
-    std::cout << "Parsing..." << std::endl;
     for(const auto& result : json_res[0]["data"]){
         results_out.push_back(
             pageEntry{
@@ -166,6 +165,7 @@ manticore::error manticore::manticoreDB::search(const std::string& query, std::v
                 .title = this->unSanitiseStr(result["title"].asString()),
                 .parsed_text_content = this->unSanitiseStr(result["parsed_text_content"].asString()),
                 .html = this->unSanitiseStr(result["html"].asString()), // This can be very time consuming... Probably best not do do this until the raw HTML is really required.
+                .highlighted_content = this->unSanitiseStr(result["highlight()"].asString()),
             }
         );
     }
