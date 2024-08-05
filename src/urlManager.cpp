@@ -68,7 +68,7 @@ url_manager::error url_manager::urlDB::addDomain(const std::string& domain){
         Download the list of pages from the API
     */
     std::vector<char> buff;
-    std::cout << "Fetching page information from https://web.archive.org/cdx/search?url=*." + domain + "/*&fl=mimetype,timestamp,original\n";
+    std::cout << "Fetching page information from https://web.archive.org/cdx/search?url=" + domain + "&fl=mimetype,timestamp,original\n";
     curl_helper::error downloadFileRes = this->ch.downloadFile("https://web.archive.org/cdx/search?url=*." + domain + "/*&fl=mimetype,timestamp,original", buff);
     if(downloadFileRes.errcode != curl_helper::errEnum::OK){
         return error{.errcode=CURL_FAIL, .errmsg=downloadFileRes.errmsg};
