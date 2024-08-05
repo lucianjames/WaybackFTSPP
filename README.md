@@ -65,6 +65,7 @@ Usage:
     - [X] Display results in web browser
     - [X] Fully interactive search through web page
     - [ ] Perfect UI for ease/speed of use
+    - [ ] Experiment with returning saved HTML when result link clicked instead of directing to archive.org
   - [ ] Advanced search features
   - [ ] Figure out how to combine proper pagination and grouping together multiple timestamps of the same page nicely
 - [X] Option to route through TOR
