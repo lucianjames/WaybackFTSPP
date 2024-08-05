@@ -55,7 +55,7 @@ namespace curl_helper{
         error getTextFromPage(const std::string& pageSrc, std::string& textOut);
     public:
         error enableTOR(const int port);
-        error downloadFile(const std::string& url, std::vector<char>& curlReadBuffer, int retries=5);
+        error downloadFile(const std::string& url, std::vector<char>& curlReadBuffer, int retries=128); // 128 = keep retrying for a long long time by default
         error manticoreQuery(const std::string& serverAddr, const std::string& query, std::string& readBuffer);
         error getParsedPage(const std::string& url, parsedPage& out);
     };
