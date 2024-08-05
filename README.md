@@ -58,6 +58,7 @@ Usage:
   - [X] Batch operation page scraping
   - [X] Multithreaded page scraping
     - [ ] Improve multithreading
+  - [ ] Move away from using sqlite3 db during scraping, move data into manticore for more reliable usage
 - [~] Search functionality
   - [X] Expand manticore class to have search features
   - [X] Output results nicely
