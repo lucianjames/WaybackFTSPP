@@ -39,11 +39,6 @@ pageScraping::error pageScraping::pageScrapeThread::scrapePage(const url_manager
         return error{.errcode=UDB_ERR, .errmsg=udbRes.errmsg};
     }
 
-    manticore::error dbCRes = this->db.setup(); // We dont know if we have connected already or not
-    if(dbCRes.errcode != manticore::errEnum::OK){
-        return error{.errcode=MANTICORE_ERR, .errmsg=dbCRes.errmsg};
-    }
-
     manticore::error dbIRes = this->db.addPage(page.url, page.timestamp, pageData.title, pageData.text, pageData.raw);
     if(dbIRes.errcode != manticore::errEnum::OK){
         return error{.errcode=MANTICORE_ERR, .errmsg=dbIRes.errmsg};
@@ -64,5 +59,16 @@ pageScraping::error pageScraping::pageScrapeThread::scrapePages(const std::vecto
         }
     }
 
+    return error{.errcode=OK, .errmsg=""};
+}
+
+
+
+
+pageScraping::error pageScraping::pageScrapeThread::createTable(){
+    manticore::error dbCRes = this->db.createTable();
+    if(dbCRes.errcode != manticore::errEnum::OK){
+        return error{.errcode=MANTICORE_ERR, .errmsg=dbCRes.errmsg};
+    }
     return error{.errcode=OK, .errmsg=""};
 }

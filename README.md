@@ -59,6 +59,7 @@ Usage:
   - [X] Multithreaded page scraping
     - [ ] Improve multithreading
   - [ ] Move away from using sqlite3 db during scraping, move data into manticore for more reliable usage
+  - [ ] Web UI for adding scrape tasks maybe?
 - [~] Search functionality
   - [X] Expand manticore class to have search features
   - [X] Output results nicely
@@ -75,3 +76,8 @@ Usage:
 - [ ] Detection +exclusion of binary files (sometimes wayback mimetype is wrong)
   - [ ] Or alternatively, handle various binary file types properly (parse them)
 - [X] Better command line options/handling
+
+### Manticore doesnt support parameterised queries!
+Unfortunately manticore search does not yet have the ability to parameterise queries, meaning a lot of unoptimal sanitising has to be done!
+This doesnt really affect the program too much but im leaving this here as a reminder they may soon release an update allowing for this (recent activity on related issues)
+Manticore pls fix!

@@ -73,7 +73,7 @@ namespace url_manager{
         error open(const std::string& dbPath);
         error addDomain(const std::string& domain);
         error enableTOR(const int port);
-        error getData(std::vector<dbEntry>& out, bool unscraped_only, const std::vector<std::string>& allowed_mimetypes);
+        error getData(std::vector<dbEntry>& out, bool unscraped_only, const std::vector<std::string>& allowed_mimetypes = {});
         error setScraped(const int ID, const bool val);
     };
 

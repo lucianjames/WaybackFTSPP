@@ -25,7 +25,7 @@ std::string manticore::manticoreDB::sanitiseStr(const std::string& str) {
         {'!', "{{EXCLAMATION}}"},
         {'/', "{{SLASH}}"},
         {'-', "{{DASH}}"}
-    };
+    }; // Not sure if all of these are required to filter out or not, just doing them all to be extra safe
 
     std::string res;
     res.reserve(str.size()); // Only perfect if no replacements need to be inserted
@@ -105,7 +105,7 @@ manticore::error manticore::manticoreDB::basicQueryExec(const std::string& query
 
 
 void manticore::manticoreDB::setTableName(const std::string& name){
-    this->tablename = name;
+    this->tablename = "pages_" + name; // Prefix allows easily filtering page and urldbs when using SHOW TABLES
 }
 
 
@@ -114,8 +114,8 @@ void manticore::manticoreDB::setServerURL(const std::string& URL){
 }
 
 
-manticore::error manticore::manticoreDB::setup(){
-    manticore::error createTableRes = this->basicQueryExec("CREATE TABLE IF NOT EXISTS " + this->tablename + "("
+manticore::error manticore::manticoreDB::createTable(){
+    error createTableRes = this->basicQueryExec("CREATE TABLE IF NOT EXISTS " + this->tablename + "("
                                                                              "id bigint,"
                                                                              "url text attribute,"
                                                                              "wayback_timestamp text attribute,"
@@ -187,4 +187,87 @@ manticore::error manticore::manticoreDB::getTables(std::vector<std::string>& out
     }
 
     return error{.errcode=OK, .errmsg=""};
+}
+
+
+void manticore::manticoreDB::setURLDBTableName(const std::string& name){
+    this->URLDB_tablename = "urldb_" + name;
+}
+
+
+manticore::error manticore::manticoreDB::URLDB_createTable(){
+    error createTableRes = this->basicQueryExec("CREATE TABLE IF NOT EXISTS " + this->URLDB_tablename + " ("
+                                                                             "id bigint,"
+                                                                             "url text attribute,"
+                                                                             "wayback_timestamp text attribute,"
+                                                                             "mimetype text attribute,"
+                                                                             "scraped int)");
+
+    return createTableRes;
+}
+
+
+manticore::error manticore::manticoreDB::URLDB_addDomain(const std::string& domain){
+    /*
+        Get page list from API
+    */
+    std::vector<char> buff;
+    std::cout << "https://web.archive.org/cdx/search?url=" + domain + "&fl=mimetype,timestamp,original\n";
+    curl_helper::error downloadFileRes = this->ch_cdxAPI.downloadFile("https://web.archive.org/cdx/search?url=" + domain + "&fl=mimetype,timestamp,original", buff);
+    if(downloadFileRes.errcode != curl_helper::errEnum::OK){
+        return error{.errcode=CURL_FAIL, .errmsg=downloadFileRes.errmsg};
+    }
+
+    /*
+        Parse the data into an std::vector of dbEntry structs.
+
+        Expected format: mimetype timestamp url \n mimetype timestamp url \n ...
+    */
+    std::string cdxData;
+    cdxData.assign(buff.begin(), buff.end()); // Convert to string
+    std::vector<URLDBEntry> cdxDataParsed;
+    std::istringstream cdp_iss(cdxData);
+    std::string line;
+    while(std::getline(cdp_iss, line)){
+        std::istringstream l_iss(line);
+        std::vector<std::string> tokens;
+        std::string token;
+        while(std::getline(l_iss, token, ' ')){
+            tokens.push_back(token);
+        }
+        if(tokens.size() != 3){
+            return error{.errcode=API_BADDATA, .errmsg="Unexpected number of tokens in line while parsing cdxData"};
+        }
+        cdxDataParsed.push_back(URLDBEntry{
+            .rowID = -1, // We dont insert rowID into the db manually, it being a primary key means sqlite does that work for us
+            .url = tokens[2],
+            .timestamp = tokens[1],
+            .mimetype = tokens[0],
+            .scraped = 0
+        });
+    }
+
+    std::cout << cdxDataParsed.size() << std::endl;
+
+    /*
+        Insert the data into the DB
+    */
+    std::string insert_query = "INSERT INTO " + this->URLDB_tablename + " (url, wayback_timestamp, mimetype, scraped) VALUES ";
+    for(int i=0; i<cdxDataParsed.size(); i++){
+        insert_query += "('" + this->sanitiseStr(cdxDataParsed[i].url) + "', '" 
+                             + this->sanitiseStr(cdxDataParsed[i].timestamp) + "', '" 
+                             + this->sanitiseStr(cdxDataParsed[i].mimetype) + "', " 
+                             + std::to_string(cdxDataParsed[i].scraped) + ((i==cdxDataParsed.size()-1)? ")" : "),");
+    }
+
+    return this->basicQueryExec(insert_query);
+}
+
+
+manticore::error manticore::manticoreDB::URLDB_enableTOR(const int port){
+    curl_helper::error res = this->ch_cdxAPI.enableTOR(port);
+    if(res.errcode == curl_helper::OK){
+        return error{.errcode=OK, .errmsg=""};
+    }
+    return error{.errcode=GENERIC_ERR, .errmsg=res.errmsg};
 }

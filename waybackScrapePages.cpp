@@ -8,10 +8,14 @@
 void scrapeThreadFunc(const std::vector<url_manager::dbEntry>& data, const std::string& tableName, const std::string& dbPath, bool useTor, int torPort){
     pageScraping::pageScrapeThread pst;
     if(useTor){
-        pst.enableTor(torPort);
+        pst.enableTor(torPort); // should handle this error
     }
     pst.setTableName(tableName);
     pst.udbOpen(dbPath);
+    pageScraping::error createTableRes = pst.createTable(); // If table already exists, wont overwrite
+    if(createTableRes.errcode != pageScraping::OK){
+        std::cout << "ERR: " << createTableRes.errmsg << std::endl;
+    }
 
     pageScraping::error scrapeRes = pst.scrapePages(data);
     std::cout << scrapeRes.errmsg << std::endl;

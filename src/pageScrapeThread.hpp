@@ -35,6 +35,7 @@ namespace pageScraping{
         error udbOpen(const std::string& dbPath); // To access func of this->udb
         error scrapePage(const url_manager::dbEntry& page);
         error scrapePages(const std::vector<url_manager::dbEntry>& pageVec);
+        error createTable(); // Makes sure that a table with the given name exists in the manticore db, creates if doesnt exist.
     };
 
 }
